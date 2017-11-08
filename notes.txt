@@ -1,0 +1,10 @@
+https://github.com/baudren/NoteOrganiser/wiki/Docker,-QML,-XServer-on-Windows
+
+
+Startup commands:
+
+# build container:
+docker build -t my-ros-app .
+
+# to run, start xming, then...
+docker run -it --name rostest -e DISPLAY=192.168.1.227:0.0 my-ros-app:latest
