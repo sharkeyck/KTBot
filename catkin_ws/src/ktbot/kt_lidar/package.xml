@@ -5,6 +5,7 @@
     Driver for neato XV11 lidar
   </description>
   <author>Katie Sharkey/Scott Martin</author>
+  <maintainer email="smartin015@gmail.com">Scott Martin</maintainer>
   <license>BSD</license>
 
   <buildtool_depend>catkin</buildtool_depend>

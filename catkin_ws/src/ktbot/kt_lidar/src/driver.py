@@ -19,22 +19,18 @@ class Lidar():
         self.ser = serial.Serial(port,115200)
         self.cb = cb
         th = thread.start_new_thread(self.read_lidar, ())
-        th.daemon = True
 
     def read_lidar(self):
         """ Read values of a scan -- call requestScan first! """
         ranges = [0]*360
 
-        last_angle = 360
+        prev_angle = 360
 
         while True:
             packet = self.read_packet()
             if not packet:
                 continue
             (speed_rpm, data) = packet
-
-            if data[0].angle < last_angle:
-                self.cb(ranges)
 
             for d in data:
                 (angle, dist_m, is_bad_data, is_low_quality) = d
@@ -43,12 +39,18 @@ class Lidar():
                 else:
                     ranges[angle] = self.MAX_RANGE
 
+            
+            if angle < prev_angle:
+                self.cb(ranges)
+            prev_angle = angle
+
+
     def parse_point_data(self, angle, data):
         dist_mm = data[0] | (( data[1] & 0x3f) << 8) # distance is coded on 14 bits
         quality = data[2] | (data[3] << 8) # quality is on 16 bits
         is_bad_data = data[1] & 0x80
         is_low_quality = data[1] & 0x40
-        parsed_data = (angle, dist_mm/1000, is_bad_data, is_low_quality)
+        parsed_data = (angle, dist_mm/1000.0, is_bad_data, is_low_quality)
         return parsed_data
 
     def check_sum(self, data):
