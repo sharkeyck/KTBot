@@ -1,0 +1,29 @@
+mqtt:
+  client:
+    protocol: 4      # MQTTv311
+  connection:
+    host: 192.168.1.3
+    port: 1883
+    keepalive: 60
+  private_path: device/001
+serializer: msgpack:dumps
+deserializer: msgpack:loads
+bridge:
+  # publish sensor data
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: common_msgs.msg:LaserScan
+    topic_from: base_scan
+    topic_to: /ros/ktbot0/base_scan
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: common_msgs.msg:Odometry
+    topic_from: base_odom
+    topic_to: /ros/ktbot0/base_odom
+  # receive commands
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: std_msgs.msg:Int16
+    topic_from: /ros/ktbot0/wheel_left_speed
+    topic_to: wheel_left_speed
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: std_msgs.msg:Int16
+    topic_from: /ros/ktbot0/wheel_right_speed
+    topic_to: wheel_right_speed

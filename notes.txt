@@ -7,14 +7,13 @@ Startup commands:
 docker build -t my-ros-app .
 
 # to run, start xming, then...
-docker run -it --rm --name -p 0:65535 rostest -e DISPLAY=192.168.1.227:0.0 -v C:\Users\semartin\Documents\KTBot\catkin_ws:/root/catkin_ws my-ros-app:latest
+docker run -it --rm --name rostest -e DISPLAY=192.168.1.227:0.0 -v C:\Users\semartin\Documents\KTBot\catkin_ws:/root/catkin_ws my-ros-app:latest
 
 
 # Ros Details:
 Laser message format: http://docs.ros.org/api/sensor_msgs/html/msg/LaserScan.html
 
 # STDR simulator launcher
-
 
 # Next steps:
 - Configure robot from (../resources/robots/pandora_robot.yaml)
@@ -23,9 +22,12 @@ Laser message format: http://docs.ros.org/api/sensor_msgs/html/msg/LaserScan.htm
 
 roslaunch ktbot stdr_server_ktbot.launch
 
-
 # Packages:
 - gmapping
 - navigation
 - stdr_simulator
 - neato_robot (https://github.com/mikeferguson/neato_robot)
+
+# Python (pip) dependencies
+- inject
+- paho-mqtt
