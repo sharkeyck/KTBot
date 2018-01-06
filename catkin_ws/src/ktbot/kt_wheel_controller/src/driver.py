@@ -1,40 +1,38 @@
 """
 ROS Bindings can be found in the kt_node package.
 """
-import thread, struct
-import serial
+import thread, struct, serial, time
 
-SERVO_CONSTANTS = {
-  FRAME_HEADER: 0x55,
-  MOVE_TIME_WRITE: 1,
-  MOVE_TIME_READ: 2,
-  MOVE_TIME_WAIT_WRITE: 7,
-  MOVE_TIME_WAIT_READ: 8,
-  MOVE_START: 11,
-  MOVE_STOP: 12,
-  ID_WRITE: 13,
-  ID_READ: 14,
-  ANGLE_OFFSET_ADJUST: 17,
-  ANGLE_OFFSET_WRITE: 18,
-  ANGLE_OFFSET_READ: 19,
-  ANGLE_LIMIT_WRITE: 20,
-  ANGLE_LIMIT_READ: 21,
-  VIN_LIMIT_WRITE: 22,
-  VIN_LIMIT_READ: 23,
-  TEMP_MAX_LIMIT_WRITE: 24,
-  TEMP_MAX_LIMIT_READ: 25,
-  TEMP_READ: 26,
-  VIN_READ: 27,
-  POS_READ: 28,
-  SERVO_OR_MOTOR_MODE_WRITE: 29,
-  SERVO_OR_MOTOR_MODE_READ: 30,
-  LOAD_OR_UNLOAD_WRITE: 31,
-  LOAD_OR_UNLOAD_READ: 32,
-  LED_CTRL_WRITE: 33,
-  LED_CTRL_READ: 34,
-  LED_ERROR_WRITE: 35,
-  LED_ERROR_READ: 36,
-}
+class SERVO_CONSTANTS:
+  FRAME_HEADER = 0x55
+  MOVE_TIME_WRITE = 1
+  MOVE_TIME_READ = 2
+  MOVE_TIME_WAIT_WRITE = 7
+  MOVE_TIME_WAIT_READ = 8
+  MOVE_START = 11
+  MOVE_STOP = 12
+  ID_WRITE = 13
+  ID_READ = 14
+  ANGLE_OFFSET_ADJUST = 17
+  ANGLE_OFFSET_WRITE = 18
+  ANGLE_OFFSET_READ = 19
+  ANGLE_LIMIT_WRITE = 20
+  ANGLE_LIMIT_READ = 21
+  VIN_LIMIT_WRITE = 22
+  VIN_LIMIT_READ = 23
+  TEMP_MAX_LIMIT_WRITE = 24
+  TEMP_MAX_LIMIT_READ = 25
+  TEMP_READ = 26
+  VIN_READ = 27
+  POS_READ = 28
+  SERVO_OR_MOTOR_MODE_WRITE = 29
+  SERVO_OR_MOTOR_MODE_READ = 30
+  LOAD_OR_UNLOAD_WRITE = 31
+  LOAD_OR_UNLOAD_READ = 32
+  LED_CTRL_WRITE = 33
+  LED_CTRL_READ = 34
+  LED_ERROR_WRITE = 35
+  LED_ERROR_READ = 36
 
 DATA_LENGTH_BYTE_IDX = 3
 DATA_LENGTH_MAX = 7
@@ -44,12 +42,13 @@ MAX_WHEEL_RPM = 62.5
 WHEEL_CIRCUMFERENCE_METERS = 0.204204
 BASE_WIDTH_METERS = 0.165
 MAX_SPEED_MPS = (MAX_WHEEL_RPM / 60.0) * WHEEL_CIRCUMFERENCE_METERS
+print MAX_SPEED_MPS
 
 LEFT_WHEEL_ID = 0
 RIGHT_WHEEL_ID = 1
 
 INFREQUENT_STATUS_PD = 5.0
-POS_UPDATE_PD = 0.25
+POS_UPDATE_PD = 0.10
 
 class WheelController():
 
@@ -68,32 +67,38 @@ class WheelController():
       # Update Pos every ~0.25s
       now = time.time()
       if now > lastStatus + INFREQUENT_STATUS_PD:
+	# print "Getting temps"
         temperatures = [self.getTemp(LEFT_WHEEL_ID), self.getTemp(RIGHT_WHEEL_ID)]
+	# print "Getting voltages"
         voltages = [self.getVoltage(LEFT_WHEEL_ID), self.getVoltage(RIGHT_WHEEL_ID)]
         self.infrequentCallback(temperatures, voltages)
+	lastStatus = now
 
+      # print "Getting positions"
       self.positionCallback([self.getPos(LEFT_WHEEL_ID), self.getPos(RIGHT_WHEEL_ID)])
       time.sleep(POS_UPDATE_PD)
 
   def set_cmd_vel(self, cmd_vel):
+    # Note: right wheel velocity commands are flipped
     self.setWheelMode(LEFT_WHEEL_ID, cmd_vel[0] * 1000 / MAX_SPEED_MPS)
-    self.setWheelMode(RIGHT_WHEEL_ID, cmd_vel[1] * 1000 / MAX_SPEED_MPS)
+    self.setWheelMode(RIGHT_WHEEL_ID, -cmd_vel[1] * 1000 / MAX_SPEED_MPS)
 
   # ---------------- Low level servo stuff below --------------------
 
-  def checksum(packet):
+  def checksum(self, packet):
     temp = 0;
     i = 2
     while (i < packet[3] + 2):
       temp += packet[i];
-      i++
+      i += 1
 
     temp = ~temp;
-    i = (uint8_t)temp;
+    i = temp & 0xFF;
     return i;
 
   def write(self, id, buf):
-    if (len > DATA_LENGTH_MAX) raise Exception("Invalid write buffer size");
+    if (len(buf) > DATA_LENGTH_MAX):
+      raise Exception("Invalid write buffer size")
 
     # Max packet size is 10
     packet = [
@@ -103,15 +108,15 @@ class WheelController():
       len(buf)+2 # Data length includes length byte and checksum
     ]
     packet += buf
-    packet.append(checksum(packet))
+    packet.append(self.checksum(packet))
 
-    print("Sending")
 
     # Clear the read buffer
     while self.ser.in_waiting:
       self.ser.read()
 
-    self.ser.write(packet, packet[3] + 3)
+    #print("SEND: " + ", ".join([hex(p) for p in packet]))
+    self.ser.write(packet)
 
   def read(self):
     frameStarted = False
@@ -119,19 +124,22 @@ class WheelController():
     headerStartCount = 0
     dataCount = 0
     dataLength = 2
-    rxBuf = ""
     recvBuf = [0] * 64
     i = 0
 
     # See https://www.dropbox.com/sh/b3v81sb9nwir16q/AACkK-tg0q39fKJZcSl-YrqOa/LX-16A%20Bus%20Servo?dl=0&preview=LewanSoul+Bus+Servo+Communication+Protocol.pdf
     # for communication protocol
-    while rxBuf is not None:
-      rxBuf = self.ser.read();
+    while True:
+      c = self.ser.read()
+      if not c:
+        print "NO RESPONSE"
+	return None
+      c = ord(c)
 
       # Detect when the frame starts (two bytes of FRAME_HEADER)
       if not frameStarted:
-        if rxBuf == SERVO_CONSTANTS.FRAME_HEADER:
-          headerStartCount++
+        if c == SERVO_CONSTANTS.FRAME_HEADER:
+          headerStartCount += 1
           if (headerStartCount == 2):
             headerStartCount = 0
             frameStarted = True
@@ -143,7 +151,7 @@ class WheelController():
 
       # Read in data when frame has started
       if frameStarted:
-        recvBuf[dataCount] = ord(rxBuf)
+        recvBuf[dataCount] = c
 
         # Parse length byte
         if dataCount == DATA_LENGTH_BYTE_IDX:
@@ -162,10 +170,11 @@ class WheelController():
 
         dataCount += 1
         if dataCount == dataLength + 3:
-          frameStarted = False;
-          print "RECV: " + ", ".join([hex(b) for b in recvBuf])
+          frameStarted = False
           # If checksum matches, we've found our packet
-          if checksum(recvBuf) == recvBuf[dataCount - 1]:
+          if self.checksum(recvBuf) == recvBuf[dataCount - 1]:
+	    recvBuf = recvBuf[4:recvBuf[3]+2]        
+	    # print "RECV: " + ", ".join([hex(b) for b in recvBuf])
             return recvBuf
           else:
             print "CHECKSUM FAIL"
@@ -173,38 +182,38 @@ class WheelController():
     print "READ FAIL"
     return None
 
-  def getPos(id):
+  def getPos(self, id):
     self.write(id, [SERVO_CONSTANTS.POS_READ])
 
     result = self.read()
     if not result:
       return None
 
-    return struct.unpack('h', ret[2], ret[1]) * WHEEL_POS_RESOLUTION_DEG
+    return ((result[2] << 8) + result[1]) * WHEEL_POS_RESOLUTION_DEG
 
-  def getTemp(id):
+  def getTemp(self, id):
     self.write(id, [SERVO_CONSTANTS.TEMP_READ])
 
     result = self.read()
     if not result:
       return None
 
-    return ret[1]
+    return result[1]
 
-  def getVoltage(id):
+  def getVoltage(self, id):
     self.write(id, [SERVO_CONSTANTS.VIN_READ])
 
     result = self.read()
     if not result:
       return None
 
-    return struct.unpack('H', ret[2], ret[1]) * WHEEL_POS_RESOLUTION_DEG
+    return ((result[2] << 8) + result[1]) * WHEEL_POS_RESOLUTION_DEG
 
-  def setWheelMode(id, speed):
+  def setWheelMode(self, id, speed):
     # Wheel speed is -1000 to 1000
     speed = round(max(min(1000, speed), -1000))
     self.write(id, [
       SERVO_CONSTANTS.SERVO_OR_MOTOR_MODE_WRITE,
       1,
       0
-    ] + struct.pack('h', speed))
+    ] + [ord(c) for c in struct.pack('<h', speed)])
