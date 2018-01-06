@@ -4,8 +4,6 @@ import roslib; roslib.load_manifest("kt_lidar")
 import rospy
 
 from sensor_msgs.msg import LaserScan
-from geometry_msgs.msg import Twist
-from tf.broadcaster import TransformBroadcaster
 
 from driver import Lidar
 
@@ -26,9 +24,6 @@ class LidarNode:
         self.scan.range_min = Lidar.MIN_RANGE
         self.scan.range_max = Lidar.MAX_RANGE
 
-        # TODO REMOVE
-        self.odomBroadcaster = TransformBroadcaster()
-
         self.lidar = Lidar(self.port, cb=self.onLidarData)
         self.scanPub = rospy.Publisher('base_scan', LaserScan, queue_size=10)
 
@@ -38,8 +33,6 @@ class LidarNode:
         self.scan.header.stamp = rospy.Time.now()
         self.scan.ranges = ranges
         self.scanPub.publish(self.scan)
-        self.odomBroadcaster.sendTransform( (0,0, 0), (0,0,0,1),
-                self.scan.header.stamp, "base_link", "odom" )
 
     def loop(self):
         # main loop of driver

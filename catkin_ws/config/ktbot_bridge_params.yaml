@@ -16,14 +16,10 @@ bridge:
     topic_to: /ros/ktbot0/base_scan
   - factory: mqtt_bridge.bridge:RosToMqttBridge
     msg_type: common_msgs.msg:Odometry
-    topic_from: base_odom
-    topic_to: /ros/ktbot0/base_odom
+    topic_from: odom
+    topic_to: /ros/ktbot0/odom
   # receive commands
   - factory: mqtt_bridge.bridge:MqttToRosBridge
-    msg_type: std_msgs.msg:Int16
-    topic_from: /ros/ktbot0/wheel_left_speed
-    topic_to: wheel_left_speed
-  - factory: mqtt_bridge.bridge:MqttToRosBridge
-    msg_type: std_msgs.msg:Int16
-    topic_from: /ros/ktbot0/wheel_right_speed
-    topic_to: wheel_right_speed
+    msg_type: nav_msgs.msg:Twist
+    topic_from: /ros/ktbot0/cmd_vel
+    topic_to: cmd_vel

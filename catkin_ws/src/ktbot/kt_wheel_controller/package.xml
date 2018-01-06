@@ -1,14 +1,16 @@
 <package>
-  <name>neato_driver</name>
-  <version>0.2.0</version>
+  <name>kt_wheel_controller</name>
+  <version>0.0.1</version>
   <description>
-    This is a driver for the KTBot
+    Wheel driver for LX16A servos
   </description>
   <author>Katie Sharkey/Scott Martin</author>
+  <maintainer email="smartin015@gmail.com">Scott Martin</maintainer>
   <license>BSD</license>
 
   <buildtool_depend>catkin</buildtool_depend>
-
+  <build_depend>message_generation</build_depend>
+  <run_depend>message_runtime</run_depend>
   <run_depend>python-serial</run_depend>
 
   <export>
