@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>kt_core</name>
+  <version>0.0.1</version>
+  <description>KTBot core files</description>
+  <author>Katie Sharkey/Scott Martin</author>
+  <maintainer email="smartin015@gmail.com">Scott Martin</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roslaunch</build_depend>
+  <build_depend>kt_lidar</build_depend>
+  <build_depend>kt_wheel_controller</build_depend>
+  <build_export_depend>kt_lidar</build_export_depend>
+  <build_export_depend>kt_wheel_controller</build_export_depend>
+  <exec_depend>kt_lidar</exec_depend>
+  <exec_depend>kt_wheel_controller</exec_depend>
+
+  <build_depend>common_msgs</build_depend>
+  <exec_depend>common_msgs</exec_depend>
+</package>
