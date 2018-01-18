@@ -1,7 +1,7 @@
 """
 ROS Bindings can be found in the kt_node package.
 """
-import thread, struct, serial, time
+import thread, struct, time
 
 class SERVO_CONSTANTS:
   FRAME_HEADER = 0x55
@@ -42,7 +42,6 @@ MAX_WHEEL_RPM = 62.5
 WHEEL_CIRCUMFERENCE_METERS = 0.204204
 BASE_WIDTH_METERS = 0.165
 MAX_SPEED_MPS = (MAX_WHEEL_RPM / 60.0) * WHEEL_CIRCUMFERENCE_METERS
-print MAX_SPEED_MPS
 
 LEFT_WHEEL_ID = 0
 RIGHT_WHEEL_ID = 1
@@ -52,8 +51,8 @@ POS_UPDATE_PD = 0.10
 
 class WheelController():
 
-  def __init__(self, port="/dev/ttyUSB0", positionCallback=None, infrequentCallback=None):
-    self.ser = serial.Serial(port, 115200, timeout=0.5)
+  def __init__(self, ser, positionCallback=None, infrequentCallback=None):
+    self.ser = ser
     self.positionCallback = positionCallback
     self.infrequentCallback = infrequentCallback
     th = thread.start_new_thread(self.read_status, ())
@@ -67,12 +66,12 @@ class WheelController():
       # Update Pos every ~0.25s
       now = time.time()
       if now > lastStatus + INFREQUENT_STATUS_PD:
-	# print "Getting temps"
+        # print "Getting temps"
         temperatures = [self.getTemp(LEFT_WHEEL_ID), self.getTemp(RIGHT_WHEEL_ID)]
-	# print "Getting voltages"
+        # print "Getting voltages"
         voltages = [self.getVoltage(LEFT_WHEEL_ID), self.getVoltage(RIGHT_WHEEL_ID)]
         self.infrequentCallback(temperatures, voltages)
-	lastStatus = now
+        lastStatus = now
 
       # print "Getting positions"
       self.positionCallback([self.getPos(LEFT_WHEEL_ID), self.getPos(RIGHT_WHEEL_ID)])
@@ -133,7 +132,7 @@ class WheelController():
       c = self.ser.read()
       if not c:
         print "NO RESPONSE"
-	return None
+        return None
       c = ord(c)
 
       # Detect when the frame starts (two bytes of FRAME_HEADER)
@@ -173,8 +172,8 @@ class WheelController():
           frameStarted = False
           # If checksum matches, we've found our packet
           if self.checksum(recvBuf) == recvBuf[dataCount - 1]:
-	    recvBuf = recvBuf[4:recvBuf[3]+2]        
-	    # print "RECV: " + ", ".join([hex(b) for b in recvBuf])
+            recvBuf = recvBuf[4:recvBuf[3]+2]
+            # print "RECV: " + ", ".join([hex(b) for b in recvBuf])
             return recvBuf
           else:
             print "CHECKSUM FAIL"

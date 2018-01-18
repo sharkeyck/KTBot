@@ -23,6 +23,17 @@ STDR simulator launcher
 
 ## Next steps
 
+- Submit PR For parsing stdr_parser xml stuff... in stdr_xml_parser.cpp
+
+```
+Node* new_node = new Node();
+new_node->file_origin = n->file_origin;
+TiXmlNode* pChild;
+```
+
+- Simulate lidar (stdr simulator)
+- Rip stuff out of turtlebot_navigation (http://wiki.ros.org/turtlebot_navigation)
+- Auto-detect serial port based on device ID
 - Configure robot from (../resources/robots/pandora_robot.yaml)
 - Copy server_with_map_and_gui_plus_robot.launch from stdr_launchers, customize
 - Setup teleop with http://wiki.ros.org/stdr_simulator/Tutorials/Using%20turtlebot%20for%20teleoperation
