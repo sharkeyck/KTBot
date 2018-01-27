@@ -15,7 +15,4 @@
   <build_export_depend>kt_wheel_controller</build_export_depend>
   <exec_depend>kt_lidar</exec_depend>
   <exec_depend>kt_wheel_controller</exec_depend>
-
-  <build_depend>common_msgs</build_depend>
-  <exec_depend>common_msgs</exec_depend>
 </package>
