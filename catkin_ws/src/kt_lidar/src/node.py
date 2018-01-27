@@ -13,7 +13,7 @@ class LidarNode:
         """ Start up connection to the Neato Robot. """
         rospy.init_node('kt_lidar')
 
-        self.port = rospy.get_param('~port', "/dev/ttyACM1")
+        self.port = rospy.get_param('~port', "/dev/ttyACM0")
         rospy.loginfo("Using port: %s"%(self.port))
 
         scan_link = rospy.get_param('~frame_id','base_laser_link')
