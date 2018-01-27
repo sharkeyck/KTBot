@@ -6,7 +6,7 @@ import rospy
 from geometry_msgs.msg import Twist
 from tf.broadcaster import TransformBroadcaster
 from nav_msgs.msg import Odometry
-from ktbot import MotorStatus
+#from ktbot import MotorStatus
 from driver import WheelController, WHEEL_CIRCUMFERENCE_METERS, BASE_WIDTH_METERS, MAX_SPEED_MPS
 
 class WheelControllerNode:
@@ -15,27 +15,34 @@ class WheelControllerNode:
         """ Start up connection to the Neato Robot. """
         rospy.init_node('kt_wheel_controller')
 
-        self.port = rospy.get_param('~port', "/dev/ttyACM1")
+        self.port = rospy.get_param('~port', "/dev/ttyUSB0")
         rospy.loginfo("Using port: %s"%(self.port))
 
         self.odomBroadcaster = TransformBroadcaster()
         self.odomPub = rospy.Publisher('odom', Odometry, queue_size=10)
-        self.statusPub = rospy.Publisher('motor_status', MotorStatus, queue_size=10)
+        #self.statusPub = rospy.Publisher('motor_status', MotorStatus, queue_size=10)
 
-        rospy.Subscriber("cmd_vel", Twist, self.cmdVelCb)
+        rospy.Subscriber("cmd_vel", Twist, self.cmdVelUpdate)
 
-        self.controller = WheelController(self.port, encoderCb=self.onWheelStatus, infrequentCb=self.onInfrequentStats)
+        self.controller = WheelController(self.port, positionCallback=self.onWheelStatus)
         self.prevWheelPos = [None, None]
+	self.then = None
 
     def onInfrequentStats(self, temperatures, voltages):
-        status = MotorStatus()
-        status.temp_c = temperatures
-        status.vin_mv = voltages
-        self.statusPub(status)
+        pass
+	#status = MotorStatus()
+        #status.temp_c = temperatures
+        #status.vin_mv = voltages
+        #self.statusPub(status)
 
-    def onWheelStatus(self, leftWheelAngle, rightWheelAngle):
-        dt = (scan.header.stamp - then).to_sec()
-        then = scan.header.stamp
+    def onWheelStatus(self, angles):
+        if not self.then:
+	  self.then = rospy.Time.now()
+          return
+	[leftWheelAngle, rightWheelAngle] = angles
+	now = rospy.Time.now()
+        dt = (now - then).to_sec()
+        then = now
 
         # Get delta in meters driven for each wheel
         d_left = (leftWheelAngle - self.prevWheelPos[0])/360.0 * WHEEL_CIRCUMFERENCE_METERS
@@ -62,7 +69,7 @@ class WheelControllerNode:
 
         # prepare odometry
         odom = Odometry(header=rospy.Header(frame_id="odom"), child_frame_id='base_link')
-        odom.header.stamp = rospy.Time.now()
+        odom.header.stamp = now
         odom.pose.pose.position.x = self.x
         odom.pose.pose.position.y = self.y
         odom.pose.pose.position.z = 0
