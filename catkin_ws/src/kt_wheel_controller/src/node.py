@@ -40,7 +40,7 @@ class WheelControllerNode:
         status = MotorStatus()
         status.temp_c = temperatures
         status.vin_mv = voltages
-        self.statusPub(status)
+        self.statusPub.publish(status)
 
     def onWheelStatus(self, wheelAngle):
         [leftWheelAngle, rightWheelAngle] = wheelAngle
@@ -86,7 +86,7 @@ class WheelControllerNode:
         odom.pose.pose.orientation = quaternion
         odom.twist.twist.linear.x = dx/dt
         odom.twist.twist.angular.z = dth/dt
-        self.odomPub(odom)
+        self.odomPub.publish(odom)
 
         self.odomBroadcaster.sendTransform( (self.x, self.y, 0), (quaternion.x, quaternion.y, quaternion.z, quaternion.w),
             then, "base_link", "odom" )

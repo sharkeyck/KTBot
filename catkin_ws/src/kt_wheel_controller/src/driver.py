@@ -1,7 +1,8 @@
 """
 ROS Bindings can be found in the kt_node package.
 """
-import thread, struct, time
+import thread, struct
+import rospy
 
 class SERVO_CONSTANTS:
   FRAME_HEADER = 0x55
@@ -60,11 +61,11 @@ class WheelController():
   def read_status(self):
     """ Read position, voltage, and temperature per wheel."""
 
-    lastStatus = time.time()
+    lastStatus = rospy.get_time()
     while True:
       # Update Vin & temp every ~5s
       # Update Pos every ~0.25s
-      now = time.time()
+      now = rospy.get_time()
       if now > lastStatus + INFREQUENT_STATUS_PD:
         # print "Getting temps"
         temperatures = [self.getTemp(LEFT_WHEEL_ID), self.getTemp(RIGHT_WHEEL_ID)]
@@ -75,7 +76,9 @@ class WheelController():
 
       # print "Getting positions"
       self.positionCallback([self.getPos(LEFT_WHEEL_ID), self.getPos(RIGHT_WHEEL_ID)])
-      time.sleep(POS_UPDATE_PD)
+
+      # print "Sleeping"
+      rospy.sleep(POS_UPDATE_PD)
 
   def set_cmd_vel(self, cmd_vel):
     # Note: right wheel velocity commands are flipped
@@ -108,7 +111,6 @@ class WheelController():
     ]
     packet += buf
     packet.append(self.checksum(packet))
-
 
     # Clear the read buffer
     while self.ser.in_waiting:
