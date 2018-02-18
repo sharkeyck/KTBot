@@ -55,6 +55,11 @@ STDR simulator launcher
 - paho-mqtt
 
 
-## Gazebo
+## Gazebo Woes
 
-`docker run -it -p 7681:7681 -p 8080:8080 --name gzweb giodegas/gzweb /bin/bash`
+// `docker run -it -p 7681:7681 -p 8080:8080 --name gzweb giodegas/gzweb /bin/bash`
+
+- Use ubuntu 16.04.1 (ver \*.3 uses nouveau drivers, which with my nvidia card doesn't work out at all.)
+- Install ros-kinetic-desktop-full
+- Install gazebo7 as the ros-gazebo package requires it
+- URDF spec needed for running a ros robot
