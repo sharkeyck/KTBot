@@ -1,0 +1,188 @@
+<?xml version='1.0'?>
+<robot name="ktbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Import all Gazebo-customization elements, including Gazebo colors -->
+  <xacro:include filename="$(find kt_gazebo)/src/ktbot.gazebo" />
+  <!-- Import Rviz colors -->
+  <xacro:include filename="$(find kt_gazebo)/src/materials.xacro" />
+
+  <xacro:property name="INF" value="1.0e+100"/>
+  <xacro:property name="PI" value="3.1415926535897931"/>
+  
+  <xacro:macro name="servo" params="suffix">
+    <link name="servo_${suffix}">
+      <inertial>
+        <mass value="0.052"/>
+        <inertia ixx="1.188e-05" ixy="0" ixz="0" iyy="8.02e-06" iyz="0" izz="1.448e-05"/>
+      </inertial>
+      <visual name='visual'>
+        <geometry>
+          <box size="0.035 0.046 0.025"/>
+        </geometry>
+        <material name="dgrey"/>
+      </visual>
+      <collision name='collision'>
+        <geometry>
+          <box size="0.035 0.046 0.025"/>
+        </geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+  <xacro:macro name="wheel" params="suffix">
+    <link name='wheel_${suffix}'>
+      <inertial>
+        <mass value="0.03"/>
+        <inertia ixx="8.48e-06" ixy="0" ixz="0" iyy="8.48e-06" iyz="0" izz="1.584e-05"/>
+      </inertial>
+      <visual name='visual'>
+        <geometry>
+          <cylinder radius="0.0325" length="0.015"/>
+        </geometry>
+        <material name="dgrey"/>
+      </visual>
+      <collision name='collision'>
+        <geometry>
+          <cylinder radius="0.0325" length="0.015"/>
+        </geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+  
+  <!-- <origin xyz="0.000537 0.007761 0.214993" rpy="0 0 0"/> -->
+
+  <link name='base'>
+    <inertial>
+      <mass value="0.41"/>
+      <inertia ixx="0.00062306"  ixy="0" ixz="0" iyy="0.00076912" iyz="0" izz="0.00139144"/>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <box size="0.15 0.135 0.0033"/>
+      </geometry>
+      <material name="white"/>
+      <transparency>0.5</transparency>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <box size="0.15 0.135 0.0033"/>
+      </geometry>
+    </collision>
+
+    <visual name='caster_visual'>
+      <origin xyz="0.0 -0.05 -0.038" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.01"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+
+    <collision name='caster_collision'>
+      <origin xyz="0.0 -0.05 -0.038" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.01"/>
+      </geometry>
+    </collision>
+  </link>
+  
+  <xacro:servo suffix='left'>
+  </xacro:servo>
+  <xacro:servo suffix='right'>
+  </xacro:servo>
+  <joint name='servo_l_fix' type='fixed'>
+    <origin xyz="-0.056463 0.041761 -0.013883" rpy="0 0 -${PI}" />
+    <parent link="base"/>
+    <child link="servo_left"/>
+  </joint>
+  <joint name='servo_r_fix' type='fixed'>
+    <origin xyz="0.057537 0.041761 -0.013883" rpy="0 0 0" />
+    <parent link="base"/>
+    <child link="servo_right"/>
+  </joint>
+
+  <xacro:wheel suffix='left'/>
+  <joint name='wheel_left_rev' type='revolute'>
+    <origin xyz="-0.086463 0.051761 -0.013883" rpy="0 ${PI/2} 0"/>
+    <parent link="base"/>
+    <child link="wheel_left"/>
+    <limit effort="0.1" velocity="1.0" lower="-${INF}" upper="${INF}"/>
+    <axis xyz="0 0 -1"/>
+    <dynamics damping="0.001" friction="0.01"/>
+  </joint>
+  <xacro:wheel suffix='right'/>
+  <joint name='wheel_right_rev' type='revolute'>
+    <origin xyz="0.087537 0.051761 -0.013883" rpy="0 ${PI/2} 0"/>
+    <parent link="base"/>
+    <child link="wheel_right"/>
+    <limit effort="0.1" velocity="1.0" lower="-${INF}" upper="${INF}"/>
+    <axis xyz="0 0 -1"/>
+    <dynamics damping="0.001" friction="0.01"/>
+  </joint>
+
+  <link name='back_stack'>
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="1.98e-06" ixy="0" ixz="0" iyy="2.3e-06" iyz="0" izz="2.35e-06"/>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <box size="0.04 0.035 0.034"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <box size="0.04 0.035 0.034"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name='back_stack_f' type='fixed'>
+    <origin xyz="0.000271 -0.039485 -0.019055" rpy="0 0 0"/>
+    <parent link="base"/>
+    <child link="back_stack"/>
+  </joint>
+
+  <link name='lidar'>
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="4.136e-05" ixy="0" ixz="0" iyy="4.136e-05" iyz="0" izz="7.605e-05"/>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <cylinder radius="0.039" length="0.02"/>
+      </geometry>
+      <material name="dgrey"/>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <cylinder radius="0.039" length="0.02"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name='lidar_rev' type='revolute'>
+    <origin xyz="0.000271 0.036043 0.063556" rpy="0 0 0"/>
+    <parent link="base"/>
+    <child link="lidar"/>
+    <limit effort="0.1" velocity="1.0" lower="-${INF}" upper="${INF}"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  
+  <transmission name="tran1">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="wheel_left_rev">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor1">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="tran2">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="wheel_right_rev">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor2">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+</robot>

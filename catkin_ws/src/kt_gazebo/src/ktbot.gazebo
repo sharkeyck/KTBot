@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<robot>
+
+  <!-- ros_control plugin -->
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/ktbot</robotNamespace>
+      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="caster_collision">
+    <!--<mu>0.0</mu>
+    <mu2>0.0</mu2>-->
+    <material>Gazebo/Gray</material>
+  </gazebo>  
+
+  <gazebo reference="servo_left">
+    <!--<mu>100</mu>
+    <mu2>50</mu2>-->
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="servo_right">
+    <!--<mu>100</mu>
+    <mu2>50</mu2>-->
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="lidar">
+    <sensor type="gpu_ray" name="head_sensor">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>5</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>0</min_angle>
+            <max_angle>6.26573201466</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.10</min>
+          <max>5.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_head_control" filename="libgazebo_ros_gpu_laser.so">
+        <topicName>/ktbot/laser/scan</topicName>
+        <frameName>lidar_link</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+</robot>
