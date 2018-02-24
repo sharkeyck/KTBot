@@ -47,14 +47,23 @@
         </geometry>
       </collision>
     </link>
-    <joint name='wheel_${suffix}_joint' type='revolute'>
+    <joint name='wheel_${suffix}_joint' type='continuous'>
       <origin xyz="${reflect*0.087537} 0.04 -0.013883" rpy="0 ${PI/2} 0"/>
       <parent link="base"/>
       <child link="wheel_${suffix}"/>
-      <limit effort="7" velocity="${MAX_RPS}" lower="-${INF}" upper="${INF}"/>
+      <limit effort="7" velocity="${MAX_RPS}"/>
       <axis xyz="0 0 -1"/>
       <dynamics damping="1.0" friction="0.00"/>
     </joint>
+    <transmission name="wheel_${suffix}_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="wheel_${suffix}_joint">
+        <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="wheel_${suffix}_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
   </xacro:macro>
   
   <!-- <origin xyz="0.000537 0.007761 0.214993" rpy="0 0 0"/> -->
@@ -108,8 +117,8 @@
     <child link="servo_right"/>
   </joint>
 
-  <xacro:wheel suffix='left' reflect="1"/>
-  <xacro:wheel suffix='right' reflect="-1"/>
+  <xacro:wheel suffix='left' reflect="-1"/>
+  <xacro:wheel suffix='right' reflect="1"/>
 
   <link name='back_stack'>
     <inertial>
@@ -156,25 +165,4 @@
     <parent link="base"/>
     <child link="lidar"/>
   </joint>
-  
-  <transmission name="tran1">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="wheel_left_joint">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="motor1">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
-  <transmission name="tran2">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="wheel_right_joint">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="motor2">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
 </robot>
