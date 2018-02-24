@@ -40,7 +40,7 @@
   <gazebo reference="lidar">
     <sensor type="gpu_ray" name="head_sensor">
       <pose>0 0 0 0 0 0</pose>
-      <visualize>false</visualize>
+      <visualize>true</visualize>
       <update_rate>5</update_rate>
       <ray>
         <scan>
@@ -63,8 +63,8 @@
         </noise>
       </ray>
       <plugin name="gazebo_ros_head_control" filename="libgazebo_ros_gpu_laser.so">
-        <topicName>/ktbot/laser/scan</topicName>
-        <frameName>lidar_link</frameName>
+        <topicName>/laser_scan</topicName>
+        <frameName>lidar</frameName>
       </plugin>
     </sensor>
   </gazebo>
