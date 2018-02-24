@@ -10,27 +10,37 @@
   </gazebo>
 
   <gazebo reference="caster_collision">
-    <!--<mu>0.0</mu>
-    <mu2>0.0</mu2>-->
-    <material>Gazebo/Gray</material>
+    <mu1 value="0.0"/>
+    <mu2 value="0.0"/>
+    <minDepth value="0.1"/>
+    <maxVel value="100.0"/>
+    <material value="Gazebo/Gray"/>
   </gazebo>  
 
-  <gazebo reference="servo_left">
-    <!--<mu>100</mu>
-    <mu2>50</mu2>-->
-    <material>Gazebo/Gray</material>
+  <gazebo reference="wheel_left">
+    <mu1 value="1000.0"/>
+    <mu2 value="1000.0"/>
+    <kp value="10000000.0" />
+    <kd value="1.0"/>
+    <minDepth value="0.1"/>
+    <maxVel value="0.0"/>
+    <material value="Gazebo/DarkGray"/>
   </gazebo>
 
-  <gazebo reference="servo_right">
-    <!--<mu>100</mu>
-    <mu2>50</mu2>-->
-    <material>Gazebo/Black</material>
+  <gazebo reference="wheel_right">
+    <mu1 value="1000.0"/>
+    <mu2 value="1000.0"/>
+    <kp value="10000000.0" />
+    <kd value="1.0"/>
+    <minDepth value="0.1"/>
+    <maxVel value="0.0"/>
+    <material value="Gazebo/DarkGray"/>
   </gazebo>
 
   <gazebo reference="lidar">
     <sensor type="gpu_ray" name="head_sensor">
       <pose>0 0 0 0 0 0</pose>
-      <visualize>true</visualize>
+      <visualize>false</visualize>
       <update_rate>5</update_rate>
       <ray>
         <scan>

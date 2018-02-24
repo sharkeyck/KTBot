@@ -5,8 +5,9 @@
   <!-- Import Rviz colors -->
   <xacro:include filename="$(find kt_gazebo)/src/materials.xacro" />
 
-  <xacro:property name="INF" value="1.0e+100"/>
+  <xacro:property name="INF" value="1.0e+50"/>
   <xacro:property name="PI" value="3.1415926535897931"/>
+  <xacro:property name="MAX_RPS" value="3.2724895833333334"/>
   
   <xacro:macro name="servo" params="suffix">
     <link name="servo_${suffix}">
@@ -27,11 +28,12 @@
       </collision>
     </link>
   </xacro:macro>
-  <xacro:macro name="wheel" params="suffix">
+  <xacro:macro name="wheel" params="suffix reflect">
     <link name='wheel_${suffix}'>
       <inertial>
         <mass value="0.03"/>
-        <inertia ixx="8.48e-06" ixy="0" ixz="0" iyy="8.48e-06" iyz="0" izz="1.584e-05"/>
+        <!-- We multiply the inertial values by 100x to prevent slippage/loss of precision by ODE. -->
+        <inertia ixx="8.48e-04" ixy="0" ixz="0" iyy="8.48e-04" iyz="0" izz="1.584e-03"/> 
       </inertial>
       <visual name='visual'>
         <geometry>
@@ -45,6 +47,14 @@
         </geometry>
       </collision>
     </link>
+    <joint name='wheel_${suffix}_joint' type='revolute'>
+      <origin xyz="${reflect*0.087537} 0.04 -0.013883" rpy="0 ${PI/2} 0"/>
+      <parent link="base"/>
+      <child link="wheel_${suffix}"/>
+      <limit effort="7" velocity="${MAX_RPS}" lower="-${INF}" upper="${INF}"/>
+      <axis xyz="0 0 -1"/>
+      <dynamics damping="1.0" friction="0.00"/>
+    </joint>
   </xacro:macro>
   
   <!-- <origin xyz="0.000537 0.007761 0.214993" rpy="0 0 0"/> -->
@@ -88,34 +98,18 @@
   <xacro:servo suffix='right'>
   </xacro:servo>
   <joint name='servo_l_fix' type='fixed'>
-    <origin xyz="-0.056463 0.041761 -0.013883" rpy="0 0 -${PI}" />
+    <origin xyz="-0.057537 0.03 -0.013883" rpy="0 0 -${PI}" />
     <parent link="base"/>
     <child link="servo_left"/>
   </joint>
   <joint name='servo_r_fix' type='fixed'>
-    <origin xyz="0.057537 0.041761 -0.013883" rpy="0 0 0" />
+    <origin xyz="0.057537 0.03 -0.013883" rpy="0 0 0" />
     <parent link="base"/>
     <child link="servo_right"/>
   </joint>
 
-  <xacro:wheel suffix='left'/>
-  <joint name='wheel_left_rev' type='revolute'>
-    <origin xyz="-0.086463 0.051761 -0.013883" rpy="0 ${PI/2} 0"/>
-    <parent link="base"/>
-    <child link="wheel_left"/>
-    <limit effort="0.1" velocity="1.0" lower="-${INF}" upper="${INF}"/>
-    <axis xyz="0 0 -1"/>
-    <dynamics damping="0.001" friction="0.01"/>
-  </joint>
-  <xacro:wheel suffix='right'/>
-  <joint name='wheel_right_rev' type='revolute'>
-    <origin xyz="0.087537 0.051761 -0.013883" rpy="0 ${PI/2} 0"/>
-    <parent link="base"/>
-    <child link="wheel_right"/>
-    <limit effort="0.1" velocity="1.0" lower="-${INF}" upper="${INF}"/>
-    <axis xyz="0 0 -1"/>
-    <dynamics damping="0.001" friction="0.01"/>
-  </joint>
+  <xacro:wheel suffix='left' reflect="1"/>
+  <xacro:wheel suffix='right' reflect="-1"/>
 
   <link name='back_stack'>
     <inertial>
@@ -135,7 +129,7 @@
     </collision>
   </link>
   <joint name='back_stack_f' type='fixed'>
-    <origin xyz="0.000271 -0.039485 -0.019055" rpy="0 0 0"/>
+    <origin xyz="0 -0.05 -0.02" rpy="0 0 0"/>
     <parent link="base"/>
     <child link="back_stack"/>
   </joint>
@@ -157,17 +151,15 @@
       </geometry>
     </collision>
   </link>
-  <joint name='lidar_rev' type='revolute'>
-    <origin xyz="0.000271 0.036043 0.063556" rpy="0 0 0"/>
+  <joint name='lidar_top' type='fixed'>
+    <origin xyz="0 0.02 0.06" rpy="0 0 0"/>
     <parent link="base"/>
     <child link="lidar"/>
-    <limit effort="0.1" velocity="1.0" lower="-${INF}" upper="${INF}"/>
-    <axis xyz="0 0 1"/>
   </joint>
   
   <transmission name="tran1">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="wheel_left_rev">
+    <joint name="wheel_left_joint">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor1">
@@ -177,7 +169,7 @@
   </transmission>
   <transmission name="tran2">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="wheel_right_rev">
+    <joint name="wheel_right_joint">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor2">
