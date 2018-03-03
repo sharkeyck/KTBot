@@ -70,7 +70,8 @@ class WheelController():
         temperatures = [self.getTemp(LEFT_WHEEL_ID), self.getTemp(RIGHT_WHEEL_ID)]
         # print "Getting voltages"
         voltages = [self.getVoltage(LEFT_WHEEL_ID), self.getVoltage(RIGHT_WHEEL_ID)]
-        self.infrequentCallback(temperatures, voltages)
+        if self.infrequentCallback:
+		self.infrequentCallback(temperatures, voltages)
         lastStatus = now
 
       # print "Getting positions"
@@ -79,8 +80,8 @@ class WheelController():
 
   def set_cmd_vel(self, cmd_vel):
     # Note: right wheel velocity commands are flipped
-    self.setWheelMode(LEFT_WHEEL_ID, cmd_vel[0] * 1000 / MAX_SPEED_MPS)
-    self.setWheelMode(RIGHT_WHEEL_ID, -cmd_vel[1] * 1000 / MAX_SPEED_MPS)
+    self.setWheelMode(LEFT_WHEEL_ID, cmd_vel[0] * 1000.0 / MAX_SPEED_MPS)
+    self.setWheelMode(RIGHT_WHEEL_ID, -cmd_vel[1] * 1000.0 / MAX_SPEED_MPS)
 
   # ---------------- Low level servo stuff below --------------------
 
@@ -211,6 +212,7 @@ class WheelController():
   def setWheelMode(self, id, speed):
     # Wheel speed is -1000 to 1000
     speed = round(max(min(1000, speed), -1000))
+    #print "WS ", id, speed
     self.write(id, [
       SERVO_CONSTANTS.SERVO_OR_MOTOR_MODE_WRITE,
       1,

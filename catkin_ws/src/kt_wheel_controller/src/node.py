@@ -18,7 +18,7 @@ class WheelControllerNode:
         rospy.init_node('kt_wheel_controller')
 
         if not port:
-            self.port = serial.Serial(rospy.get_param('~port', "/dev/ttyACM1"), 115200, timeout=0.5)
+            self.port = serial.Serial(rospy.get_param('~port', "/dev/ttyUSB0"), 115200, timeout=0.5)
         else:
             self.port = port
 
@@ -31,18 +31,21 @@ class WheelControllerNode:
         rospy.Subscriber("cmd_vel", Twist, self.cmdVelUpdate)
 
         self.controller = WheelController(self.port,
-            positionCallback=self.onWheelStatus,
-            infrequentCallback=self.onInfrequentStats)
+            positionCallback=self.onWheelStatus)
+            #infrequentCallback=self.onInfrequentStats)
         self.prevWheelPos = [None, None]
         self.then = None
+	print "init complete"
 
     def onInfrequentStats(self, temperatures, voltages):
+	print "infrequenstats"
         status = MotorStatus()
         status.temp_c = temperatures
         status.vin_mv = voltages
         self.statusPub(status)
 
     def onWheelStatus(self, wheelAngle):
+	print "wheelstatus"
         [leftWheelAngle, rightWheelAngle] = wheelAngle
 
         now = rospy.Time.now()
@@ -93,7 +96,7 @@ class WheelControllerNode:
 
     def cmdVelUpdate(self, req):
         # Forward velocity
-        x = req.linear.x * 1000
+        x = req.linear.x
 
         # Difference between wheel speeds for turning
         th = req.angular.z * (BASE_WIDTH_METERS/2)
@@ -107,7 +110,9 @@ class WheelControllerNode:
             th = th*MAX_SPEED_MPS/k
 
         # Set velocity for both wheels
-        self.controller.set_cmd_vel([int(x-th), int(x+th)])
+	#print "cmdvel", str([int(x-th), int(x+th)]), x, th, k, MAX_SPEED_MPS
+	print "Expect ", x-th, x+th 
+        self.controller.set_cmd_vel([x-th, x+th])
 
     def loop(self):
         # main loop of driver
