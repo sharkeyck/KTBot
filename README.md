@@ -23,20 +23,24 @@ STDR simulator launcher
 
 ## Next steps
 
-- Submit PR For parsing stdr_parser xml stuff... in stdr_xml_parser.cpp
-
-```
-Node* new_node = new Node();
-new_node->file_origin = n->file_origin;
-TiXmlNode* pChild;
-```
-
-- Simulate lidar (stdr simulator)
-- Rip stuff out of turtlebot_navigation (http://wiki.ros.org/turtlebot_navigation)
-- Auto-detect serial port based on device ID
-- Configure robot from (../resources/robots/pandora_robot.yaml)
-- Copy server_with_map_and_gui_plus_robot.launch from stdr_launchers, customize
-- Setup teleop with http://wiki.ros.org/stdr_simulator/Tutorials/Using%20turtlebot%20for%20teleoperation
+- Localization, motion planning, and mapping
+  - Research `navigation` and `gmapping` libraries, construct settings files for both of 'em.
+  - Using teleop, construct a map
+  - Point-and-click SLAM navigation
+- Gazebo
+  - Complete "model structure & requirements", "make a mobile robot", and "add a sensor to a robot" in [Build a robot](http://gazebosim.org/tutorials?cat=build_robot) tutorial set.
+  - Create a "Neato" lidar module and publish it to osrf/gazebo_models
+  - Adapt a model plugin that retrieves the gazebo simulated lidar data and publishes it on a ros topic. (see [gazebo_ros_pkgs tutorials](http://gazebosim.org/tutorials?cat=connect_ros))
+  - Create a servo simulator model plugin (LX-16A) that parses/interprets serial data and affects a rotating joint. Consider upstreaming it in gazebo_ros_pkgs.
+  - Create a KTBot-like robot with rotatable wheels and top lidar
+  - Construct a .world file to launch the ktbot and register the lidar/servo plugins
+  - Try a full integration test, running the simulated bot using [teleop via ROS](http://wiki.ros.org/stdr_simulator/Tutorials/Using%20turtlebot%20for%20teleoperation)
+  - Construct hackerhouse model using [this tutorial](http://gazebosim.org/tutorials?cat=build_world&tut=building_editor) and drive the KTbot around in it.
+- Autonomy
+  - Build charge station (switch-based wireless charger)
+  - Setup low battery sensing (via servos?)
+  - Return-to-base behavior when low on battery or objective complete
+  - Think up fun objectives!
 
 ## Packages
 
@@ -49,3 +53,13 @@ TiXmlNode* pChild;
 
 - inject
 - paho-mqtt
+
+
+## Gazebo Woes
+
+// `docker run -it -p 7681:7681 -p 8080:8080 --name gzweb giodegas/gzweb /bin/bash`
+
+- Use ubuntu 16.04.1 (ver \*.3 uses nouveau drivers, which with my nvidia card doesn't work out at all.)
+- Install ros-kinetic-desktop-full
+- Install gazebo7 as the ros-gazebo package requires it
+- URDF spec needed for running a ros robot
