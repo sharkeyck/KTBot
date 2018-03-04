@@ -9,7 +9,7 @@
 
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find kt_gazebo)/src/kt_gazebo.world"/>
+    <arg name="world_name" value="$(find ktbot_description)/world/ktbot_gazebo.world"/>
     <arg name="debug" value="$(arg debug)" />
     <arg name="gui" value="$(arg gui)" />
     <arg name="paused" value="$(arg paused)"/>
@@ -19,11 +19,11 @@
 
   <!-- Load the URDF into the ROS Parameter Server -->
   <param name="robot_description"
-    command="$(find xacro)/xacro --inorder '$(find kt_gazebo)/src/kt_gazebo.xacro'" />
+    command="$(find xacro)/xacro --inorder '$(find ktbot_description)/urdf/ktbot.xacro'" />
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-    args="-urdf -model kt_gazebo -param robot_description"/>
+    args="-urdf -model ktbot -param robot_description"/>
 
   <!-- ros_control rrbot launch file -->
   <!--include file="$(find rrbot_control)/launch/rrbot_control.launch" /-->
@@ -35,9 +35,9 @@
   <!-- ros_control rrbot launch file -->
   <!--include file="$(find rrbot_control)/launch/rrbot_control.launch" /-->
 
-  <rosparam command="load" file="$(find kt_gazebo)/config/joints.yaml"/>
+  <rosparam command="load" file="$(find ktbot_description)/config/joints.yaml"/>
 
-  <node name="ktbot_controller_spawner" pkg="controller_manager" type="spawner" args="joint_state_controller wheel_diff_drive_controller"/>
+  <node name="ktbot_controller_spawner" pkg="controller_manager" type="spawner" args="joint_state_controller wheel_diff_drive_controller kt_wheel_control"/>
 
   <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
     <param name="default_topic" value="/wheel_diff_drive_controller/cmd_vel"/>

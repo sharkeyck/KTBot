@@ -1,5 +1,18 @@
 <launch>
-  <node name="mqtt_bridge" pkg="mqtt_bridge" type="mqtt_bridge_node.py" output="screen">
-    <rosparam command="load" file="$(find kt_core)/config/ktbot_bridge_params.yaml" />
-  </node>
+  <arg name="sim" default="false"/> 
+
+  <!-- Push into a namspace so mqtt is still valid even if brain and core are both run on the same host. -->
+  <group ns="ktbot">
+    <node name="mqtt_bridge" pkg="mqtt_bridge" type="mqtt_bridge_node.py" output="screen">
+      <rosparam command="load" file="$(find kt_core)/config/ktbot_bridge_params.yaml" />
+    </node>
+
+    <node name="wheel_controller" pkg="kt_wheel_controller" type=".py" output="screen" />
+
+    <node name="lidar" pkg="kt_lidar" type="node.py" output="screen">
+      <rosparam command="load" file="$(find kt_core)/config/ktbot_bridge_params.yaml" />
+    </node>
+  </group>
+
+  <include file="$(find kt_gazebo)/launch/kt_gazebo.launch" if="$(arg sim)"/>
 </launch>

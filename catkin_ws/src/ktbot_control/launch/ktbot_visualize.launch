@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Load example URDF -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find ktbot_description)/urdf/ktbot.xacro'" />
+    
+  <!-- Show in Rviz  -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ktbot_description)/launch/ktbot.rviz"/>
+
+</launch>
+

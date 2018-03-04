@@ -1,10 +1,10 @@
 <package>
-  <name>kt_gazebo</name>
+  <name>lx_arm</name>
   <version>0.0.1</version>
   <description>
-    KT Bot gazebo files
+    LX-16A servo powered arm
   </description>
-  <author>Katie Sharkey/Scott Martin</author>
+  <author>Scott Martin</author>
   <maintainer email="smartin015@gmail.com">Scott Martin</maintainer>
   <license>BSD</license>
 

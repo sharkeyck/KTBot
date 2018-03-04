@@ -1,6 +1,6 @@
 <launch>
   <param name="robot_description"
-    command="$(find xacro)/xacro --inorder '$(find kt_gazebo)/src/kt_gazebo.xacro'" />
+    command="$(find xacro)/xacro --inorder '$(find lx_arm)/src/lx_arm.xacro'" />
 
   <!-- send fake joint values -->
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
@@ -11,6 +11,6 @@
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 
   <!-- Show in Rviz   -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find kt_gazebo)/launch/kt_gazebo.rviz"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find lx_arm)/launch/lx_arm.rviz"/>
 
 </launch>

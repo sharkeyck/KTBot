@@ -1,0 +1,101 @@
+# ros_control_boilerplate Settings -----------------------
+# Settings for ros_control control loop
+generic_hw_control_loop:
+  loop_hz: 50
+  cycle_time_error_threshold: 0.1
+
+# Settings for ros_control hardware interface
+hardware_interface:
+   joints:
+      - wheel_left_joint
+      - wheel_right_joint
+   sim_control_mode: 0 # 0: position, 1: velocity
+
+# Publish all joint states ----------------------------------
+# Creates the /joint_states topic necessary in ROS
+joint_state_controller:
+   type:         joint_state_controller/JointStateController
+   publish_rate: 50
+
+
+# https://github.com/ros-controls/ros_controllers/blob/kinetic-devel/diff_drive_controller/test/diffbot.h#L128:23
+wheel_diff_drive_controller:
+  type: "diff_drive_controller/DiffDriveController"
+  publish_rate: 50
+
+  left_wheel: ['wheel_left_joint']
+  right_wheel: ['wheel_right_joint']
+
+  wheel_separation: 0.175074
+
+  # Odometry covariances for the encoder output of the robot. These values should
+  # be tuned to your robot's sample odometry data, but these values are a good place
+  # to start
+  pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.03]
+  twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.03]
+
+  # Top level frame (link) of the robot description
+  base_frame_id: base_link
+
+  # Velocity and acceleration limits for the robot
+  linear:
+    x:
+      has_velocity_limits    : true
+      max_velocity           : 0.2   # m/s
+      has_acceleration_limits: true
+      max_acceleration       : 0.6   # m/s^2
+  angular:
+    z:
+      has_velocity_limits    : true
+      max_velocity           : 2.0   # rad/s
+      has_acceleration_limits: true
+      max_acceleration       : 6.0   # rad/s^2
+
+
+# Joint Trajectory Controller -------------------------------
+# For detailed explanations of parameter see http://wiki.ros.org/joint_trajectory_controller
+position_trajectory_controller:
+   type: position_controllers/JointTrajectoryController
+   # These joints can likely just be copied from the hardware_interface list above
+   joints:
+      - wheel_left_joint
+      - wheel_right_joint
+   constraints:
+      goal_time: 5.0
+      #stopped_position_tolerance: 0.4 # Defaults to 0.01
+      wheel_left_joint:
+          trajectory: 0.60
+          goal:       0.15
+      wheel_right_joint:
+          trajectory: 0.60
+          goal:       0.15
+   # gains:
+   #     wheel_left_joint: {p: 2.0,  i: 0.0, d: 0.01, i_clamp: 1}
+   #     wheel_right_joint: {p: 2.0,  i: 0.0, d: 0.01, i_clamp: 1}
+
+    # state_publish_rate:  50 # Defaults to 50
+    # action_monitor_rate: 20 # Defaults to 20
+    #hold_trajectory_duration: 0 # Defaults to 0.5
+
+# Individual Position Controllers ---------------------------------------
+# Allows to send individual ROS msg of Float64 to each joint separately
+wheel_left_joint_position_controller:
+   type: position_controllers/JointPositionController
+   joint: wheel_left_joint
+   pid: {p: 100.0, i: 0.01, d: 10.0}
+wheel_right_joint_position_controller:
+   type: position_controllers/JointPositionController
+   joint: wheel_right_joint
+   pid: {p: 100.0, i: 0.01, d: 10.0}
+
+# Group Position Controllers ---------------------------------------
+# Allows to send single ROS msg of Float64MultiArray to all joints
+joint_position_controller:
+   type: position_controllers/JointGroupPositionController
+   joints:
+     - wheel_left_joint
+     - wheel_right_joint
+
+
+kt_wheel_control:
+  type: "kt_wheel_control/wheel_control"

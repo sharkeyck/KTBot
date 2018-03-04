@@ -1,9 +1,9 @@
 <?xml version='1.0'?>
 <robot name="ktbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- Import all Gazebo-customization elements, including Gazebo colors -->
-  <xacro:include filename="$(find kt_gazebo)/src/ktbot.gazebo" />
+  <xacro:include filename="$(find ktbot_description)/urdf/ktbot.gazebo" />
   <!-- Import Rviz colors -->
-  <xacro:include filename="$(find kt_gazebo)/src/materials.xacro" />
+  <xacro:include filename="$(find ktbot_description)/urdf/materials.xacro" />
 
   <xacro:property name="INF" value="1.0e+50"/>
   <xacro:property name="PI" value="3.1415926535897931"/>
