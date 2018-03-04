@@ -11,7 +11,6 @@ catkin_package(
     roscpp
   LIBRARIES
     lx16a_driver_cpp
-    lx16a_driver_python
 )
 
 include_directories(

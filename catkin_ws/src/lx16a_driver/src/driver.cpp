@@ -1,4 +1,4 @@
-#include "driver.h"
+#include "lx16a_driver/driver.h"
 
 #include <stdio.h>
 #include <fcntl.h>
@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 
 #define GET_LOW_BYTE(A) (uint8_t)((A))
 //Macro function  get lower 8 bits of A
@@ -89,6 +90,13 @@ void LX16AServo::writePacket(uint8_t *buf, uint8_t len) {
   }
   printf("\n");
   */
+
+  // Clear the buffer
+  int bytes;
+  ioctl(ser, FIONREAD, &bytes);
+  char dump[bytes];
+  read(ser, dump, bytes);
+
   write(ser, packet, packet[3] + 3);
 }
 
@@ -250,7 +258,7 @@ bool LX16AServo::getPos(float *degree) {
     return false;
   }
 
-  *degree = BYTE_TO_HW(ret[2], ret[1]) * 0.24;
+  *degree = int16_t(BYTE_TO_HW(ret[2], ret[1])) * 0.24;
   return true;
 }
 
