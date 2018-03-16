@@ -2,9 +2,8 @@
 
 import roslib; roslib.load_manifest("kt_lidar")
 import rospy
-
+from std_msgs.msg import Bool
 from sensor_msgs.msg import LaserScan
-
 from driver import Lidar
 
 class LidarNode:
@@ -26,6 +25,7 @@ class LidarNode:
 
         self.lidar = Lidar(self.port, cb=self.onLidarData)
         self.scanPub = rospy.Publisher('base_scan', LaserScan, queue_size=10)
+        self.scanSub = rospy.Subscriber("set_spin", Bool, onSetSpin)
 
 
     def onLidarData(self, ranges):
@@ -33,6 +33,9 @@ class LidarNode:
         self.scan.header.stamp = rospy.Time.now()
         self.scan.ranges = ranges
         self.scanPub.publish(self.scan)
+
+    def onSetSpin(self, data):
+        self.lidar.set_spin(data.data)
 
     def loop(self):
         # main loop of driver

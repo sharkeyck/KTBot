@@ -19,6 +19,7 @@ class Lidar():
         self.ser = serial.Serial(port,115200)
         self.cb = cb
         th = thread.start_new_thread(self.read_lidar, ())
+        self.set_spin(False)
 
     def read_lidar(self):
         """ Read values of a scan -- call requestScan first! """
@@ -44,6 +45,11 @@ class Lidar():
                 self.cb(ranges)
             prev_angle = angle
 
+    def set_spin(self, enable=True):
+        if enable:
+            self.ser.write("MotorOn\n")
+        else:
+            self.ser.write("MotorOff\n")
 
     def parse_point_data(self, angle, data):
         dist_mm = data[0] | (( data[1] & 0x3f) << 8) # distance is coded on 14 bits
