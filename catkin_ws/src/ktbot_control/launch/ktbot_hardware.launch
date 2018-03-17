@@ -25,10 +25,6 @@
     <!-- Convert joint states to /tf tranforms -->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
 
-    <!-- TODO Make more principled -->
-    <!-- Load the URDF into the ROS Parameter Server -->
-    <param name="robot_description"
-      command="$(find xacro)/xacro --inorder '$(find ktbot_description)/urdf/ktbot.xacro'" />
     <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
       <param name="default_topic" value="wheel_diff_drive_controller/cmd_vel"/>
     </node>

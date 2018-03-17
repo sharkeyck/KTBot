@@ -21,15 +21,8 @@ STDR simulator launcher
 
 ## Next steps
 
-- Workflow fixes
-  - Make single simulatable kt_core launcher and kt_brain launcher.
-  - Set vim editor spaces
-  - Back up KTbot SD card file
 - Mechanical fixes
-  - Edit bot launch file to startup wheel & lidar nodes
-  - Fix serial permissions & do auto port recognition
-     - `sudo usermod -a -G dialout $USER`
-  - Lidar node should turn lidar spin on & off.
+  - do auto port recognition
   - More stable wheel base 
 - Driver fixes
   - Fix servo settings for drifting servo
