@@ -25,7 +25,7 @@ class LidarNode:
 
         self.lidar = Lidar(self.port, cb=self.onLidarData)
         self.scanPub = rospy.Publisher('base_scan', LaserScan, queue_size=10)
-        self.scanSub = rospy.Subscriber("set_spin", Bool, onSetSpin)
+        self.scanSub = rospy.Subscriber("set_spin", Bool, self.onSetSpin)
 
 
     def onLidarData(self, ranges):
