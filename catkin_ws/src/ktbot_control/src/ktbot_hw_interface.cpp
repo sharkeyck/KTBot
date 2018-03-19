@@ -100,6 +100,7 @@ KTBotHWInterface::KTBotHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
 void KTBotHWInterface::read(ros::Duration &elapsed_time)
 {
 
+  // TODO: Dedupe this code
   float deg;
   if (left.getPos(&deg)) {
     double d = deg - left_prev_deg;
@@ -116,12 +117,21 @@ void KTBotHWInterface::read(ros::Duration &elapsed_time)
     // Note: Joint effort not necessary for velocity
     left_prev_deg = deg;
   }
-
-  /*
   if (right.getPos(&deg)) {
-    joint_position_[RIGHT_JOINT_ID] = deg;
+    double d = deg - right_prev_deg;
+    if (abs(d) > ROLLOVER_THRESHOLD_DEG) {
+      right_rotations += (d > 0) ? -1 : 1;
+    }
+    double newpos = ((360.0*right_rotations) + deg) * PI / 180.0;
+    double newvel = double(newpos - joint_position_[RIGHT_JOINT_ID]) / elapsed_time.toSec();
+    joint_velocity_[RIGHT_JOINT_ID] = (joint_velocity_[RIGHT_JOINT_ID] * (1.0 - RUNNING_AVG_NEW_WEIGHT) + newvel * RUNNING_AVG_NEW_WEIGHT);
+    joint_position_[RIGHT_JOINT_ID] = newpos;
+    
+    //ROS_INFO_NAMED("ktbot_hw_interface", "%02f\t%02f\t%02f\t%02f\n", deg, d, left_rotations, newpos);
+    
+    // Note: Joint effort not necessary for velocity
+    left_prev_deg = deg;
   }
-  */
 }
 
 void KTBotHWInterface::write(ros::Duration &elapsed_time)
@@ -136,7 +146,10 @@ void KTBotHWInterface::write(ros::Duration &elapsed_time)
     left.setWheelMode(int16_t(joint_velocity_command_[LEFT_JOINT_ID] * 1000 / MAX_RPM));
     left_prev_vel_cmd = joint_velocity_command_[LEFT_JOINT_ID];
   }
-  //right.move(joint_position_command_[RIGHT_JOINT_ID], 100);
+  if (right_prev_vel_cmd != joint_velocity_command_[RIGHT_JOINT_ID]) {
+    right.setWheelMode(int16_t(joint_velocity_command_[RIGHT_JOINT_ID] * 1000 / MAX_RPM));
+    right_prev_vel_cmd = joint_velocity_command_[RIGHT_JOINT_ID];
+  }
 
   // TODO joint_velocity_command_
 }

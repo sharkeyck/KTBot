@@ -6,5 +6,10 @@
     </node>
 
     <!-- TODO: Mapping & localization -->
+    <!--
+    <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping">
+      <remap from="scan" to="/ktbot/base_scan"/>
+    </node>
+    -->
   </group>
 </launch>
