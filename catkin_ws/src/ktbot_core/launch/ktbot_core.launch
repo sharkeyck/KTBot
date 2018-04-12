@@ -4,7 +4,7 @@
   <!-- Push into a namspace so mqtt is still valid even if brain and core are both run on the same host. -->
   <group ns="ktbot">
     <node name="mqtt_bridge" pkg="mqtt_bridge" type="mqtt_bridge_node.py" output="screen">
-      <rosparam command="load" file="$(find kt_core)/config/ktbot_bridge_params.yaml" />
+      <rosparam command="load" file="$(find ktbot_core)/config/ktbot_bridge_params.yaml" />
     </node>
     
     <!-- Load example URDF -->
@@ -25,7 +25,7 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
 
     <node name="lidar" pkg="kt_lidar" type="node.py" output="screen">
-      <rosparam command="load" file="$(find kt_core)/config/ktbot_bridge_params.yaml" />
+      <rosparam command="load" file="$(find ktbot_core)/config/ktbot_bridge_params.yaml" />
     </node>
   </group>
 

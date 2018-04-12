@@ -21,6 +21,11 @@ STDR simulator launcher
 
 ## Next steps
 
+- Fix MQTT data exception on laser_scan receive by ktbrain_core
+- HDMI debug ktbot, figure out why ssh is not working
+- sim should remap topics that are normally published to mqtt.
+- get gmapping to work again
+
 - Mechanical fixes
   - do auto port recognition
   - More stable wheel base 

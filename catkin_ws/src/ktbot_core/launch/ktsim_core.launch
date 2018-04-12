@@ -9,7 +9,7 @@
 
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find ktbot_description)/world/ktbot_gazebo.world"/>
+    <arg name="world_name" value="$(find ktbot_description)/world/ktbot_test1.world"/>
     <arg name="debug" value="$(arg debug)" />
     <arg name="gui" value="$(arg gui)" />
     <arg name="paused" value="$(arg paused)"/>
@@ -19,6 +19,11 @@
 
   <!-- Push into a namspace so mqtt is still valid even if brain and core are both run on the same host. -->
   <group ns="ktbot">
+    <!--
+    <node name="mqtt_bridge" pkg="mqtt_bridge" type="mqtt_bridge_node.py" output="screen">
+      <rosparam command="load" file="$(find ktbot_core)/config/ktbot_bridge_params.yaml" />
+    </node>
+    -->
 
     <!-- Load the URDF into the ROS Parameter Server -->
     <param name="robot_description"
@@ -32,7 +37,8 @@
       <param name="publish_frequency" type="double" value="30.0" />
     </node>
 
-    <rosparam command="load" file="$(find ktbot_description)/config/joints.yaml"/>
+    <!-- Load controller settings -->
+    <rosparam file="$(find ktbot_control)/config/ktbot_controllers.yaml" command="load"/>
 
     <node name="ktbot_controller_spawner" pkg="controller_manager" type="spawner" args="joint_state_controller wheel_diff_drive_controller"/>
 

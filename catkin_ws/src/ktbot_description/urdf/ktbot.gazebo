@@ -64,7 +64,7 @@
       </ray>
       <plugin name="gazebo_ros_head_control" filename="libgazebo_ros_gpu_laser.so">
         <topicName>laser_scan</topicName>
-        <frameName>lidar</frameName>
+        <frameName>/lidar</frameName>
       </plugin>
     </sensor>
   </gazebo>

@@ -12,8 +12,8 @@ bridge:
   # publish sensor data
   - factory: mqtt_bridge.bridge:MqttToRosBridge
     msg_type: sensor_msgs.msg:LaserScan
-    topic_from: /ros/ktbot0/base_scan
-    topic_to: base_scan
+    topic_from: /ros/ktbot0/laser_scan
+    topic_to: laser_scan
   - factory: mqtt_bridge.bridge:MqttToRosBridge
     msg_type: nav_msgs.msg:Odometry
     topic_from: /ros/ktbot0/odom
