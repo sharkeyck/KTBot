@@ -9,7 +9,7 @@ mqtt:
 serializer: msgpack:dumps
 deserializer: msgpack:loads
 bridge:
-  # publish sensor data
+  # receive data
   - factory: mqtt_bridge.bridge:MqttToRosBridge
     msg_type: sensor_msgs.msg:LaserScan
     topic_from: /ros/ktbot0/laser_scan
@@ -18,8 +18,12 @@ bridge:
     msg_type: nav_msgs.msg:Odometry
     topic_from: /ros/ktbot0/odom
     topic_to: odom
-  # receive commands
+  # publish commands
   - factory: mqtt_bridge.bridge:RosToMqttBridge
     msg_type: geometry_msgs.msg:Twist
     topic_from: cmd_vel
     topic_to: /ros/ktbot0/cmd_vel
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: std_msgs.msg:Bool
+    topic_from: set_spin
+    topic_to: /ros/ktbot0/set_spin
