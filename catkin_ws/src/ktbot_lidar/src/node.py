@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import roslib; roslib.load_manifest("kt_lidar")
+import roslib
 import rospy
 from std_msgs.msg import Bool
 from sensor_msgs.msg import LaserScan
@@ -13,7 +13,7 @@ class LidarNode:
         rospy.init_node('kt_lidar')
 
         self.port = rospy.get_param('~port', "/dev/ttyACM0")
-        rospy.loginfo("Using port: %s"%(self.port))
+        rospy.loginfo("Lidar using port: %s"%(self.port))
 
         scan_link = rospy.get_param('~frame_id','base_laser_link')
         self.scan = LaserScan(header=rospy.Header(frame_id=scan_link))
@@ -24,7 +24,7 @@ class LidarNode:
         self.scan.range_max = Lidar.MAX_RANGE
 
         self.lidar = Lidar(self.port, cb=self.onLidarData)
-        self.scanPub = rospy.Publisher('base_scan', LaserScan, queue_size=10)
+        self.scanPub = rospy.Publisher('laser_scan', LaserScan, queue_size=10)
         self.scanSub = rospy.Subscriber("set_spin", Bool, self.onSetSpin)
 
 

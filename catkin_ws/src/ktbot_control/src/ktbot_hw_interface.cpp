@@ -50,11 +50,10 @@
 using std::string;
 
 #define LEFT_JOINT_ID 0
-// TODO: 1
-#define LEFT_JOINT_SERVO_ID 3
+#define LEFT_JOINT_SERVO_ID 0
 
 #define RIGHT_JOINT_ID 1
-#define RIGHT_JOINT_SERVO_ID 2
+#define RIGHT_JOINT_SERVO_ID 1
 
 #define RUNNING_AVG_NEW_WEIGHT 0.05
 #define ROLLOVER_THRESHOLD_DEG 100
@@ -112,10 +111,12 @@ void KTBotHWInterface::read(ros::Duration &elapsed_time)
     joint_velocity_[LEFT_JOINT_ID] = (joint_velocity_[LEFT_JOINT_ID] * (1.0 - RUNNING_AVG_NEW_WEIGHT) + newvel * RUNNING_AVG_NEW_WEIGHT);
     joint_position_[LEFT_JOINT_ID] = newpos;
     
-    //ROS_INFO_NAMED("ktbot_hw_interface", "%02f\t%02f\t%02f\t%02f\n", deg, d, left_rotations, newpos);
+    // ROS_INFO_NAMED("ktbot_hw_interface", "%02f\t%02f\t%02f\t%02f\n", deg, d, left_rotations, newpos);
     
     // Note: Joint effort not necessary for velocity
     left_prev_deg = deg;
+  } else {
+    ROS_INFO_NAMED("ktbot_hw_interface", "No data from left wheel\n");
   }
   if (right.getPos(&deg)) {
     double d = deg - right_prev_deg;
@@ -127,10 +128,12 @@ void KTBotHWInterface::read(ros::Duration &elapsed_time)
     joint_velocity_[RIGHT_JOINT_ID] = (joint_velocity_[RIGHT_JOINT_ID] * (1.0 - RUNNING_AVG_NEW_WEIGHT) + newvel * RUNNING_AVG_NEW_WEIGHT);
     joint_position_[RIGHT_JOINT_ID] = newpos;
     
-    //ROS_INFO_NAMED("ktbot_hw_interface", "%02f\t%02f\t%02f\t%02f\n", deg, d, left_rotations, newpos);
+    // ROS_INFO_NAMED("ktbot_hw_interface", "%02f\t%02f\t%02f\t%02f\n", deg, d, left_rotations, newpos);
     
     // Note: Joint effort not necessary for velocity
     left_prev_deg = deg;
+  } else {
+    ROS_INFO_NAMED("ktbot_hw_interface", "No data from right wheel\n");
   }
 }
 

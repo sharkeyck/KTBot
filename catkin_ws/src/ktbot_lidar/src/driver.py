@@ -16,7 +16,7 @@ class Lidar():
     MAX_RANGE = 5.0
 
     def __init__(self, port="/dev/ttyUSB0", cb=None):
-        self.ser = serial.Serial(port,115200)
+        self.ser = serial.Serial(port, 115200, timeout=0.5)
         self.cb = cb
         th = thread.start_new_thread(self.read_lidar, ())
         self.set_spin(False)
@@ -28,19 +28,19 @@ class Lidar():
         prev_angle = 360
 
         while True:
-            packet = self.read_packet()
-            if not packet:
-                continue
-            (speed_rpm, data) = packet
-
+            try: 
+                packet = self.read_packet()
+                if not packet:
+                    continue
+                (speed_rpm, data) = packet
+            except:
+                print(e)
             for d in data:
                 (angle, dist_m, is_bad_data, is_low_quality) = d
                 if not is_bad_data:
                     ranges[angle] = dist_m
                 else:
                     ranges[angle] = self.MAX_RANGE
-
-            
             if angle < prev_angle:
                 self.cb(ranges)
             prev_angle = angle
@@ -86,7 +86,7 @@ class Lidar():
 
         #start byte
         full_data = self.ser.read(1)
-        if ord(full_data) != START_BYTE:
+        if full_data == '' or ord(full_data) != START_BYTE:
             return None
         #position index
         full_data += self.ser.read(1)

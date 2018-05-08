@@ -12,7 +12,7 @@
 
     <!-- Load hardware interface -->
     <node name="ktbot_hardware_interface" pkg="ktbot_control" type="ktbot_hw_main"
-          output="screen" launch-prefix="$(arg launch_prefix)"/>
+          output="screen" launch-prefix=""/>
 
     <!-- Load controller settings -->
     <rosparam file="$(find ktbot_control)/config/ktbot_controllers.yaml" command="load"/>
@@ -24,10 +24,10 @@
     <!-- Convert joint states to /tf tranforms -->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
 
-    <node name="lidar" pkg="kt_lidar" type="node.py" output="screen">
+    <node name="lidar" pkg="ktbot_lidar" type="node.py" output="screen">
       <rosparam command="load" file="$(find ktbot_core)/config/ktbot_bridge_params.yaml" />
     </node>
   </group>
 
-  <include file="$(find kt_gazebo)/launch/kt_gazebo.launch" if="$(arg sim)"/>
+  <!-- <include file="$(find ktbot_gazebo)/launch/kt_gazebo.launch" if="$(arg sim)"/> -->
 </launch>

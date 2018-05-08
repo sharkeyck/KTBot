@@ -131,7 +131,6 @@ bool LX16AServo::readPacket(uint8_t *ret) {
   uint8_t i;
 
   if (!waitForAvailable()) {
-    printf("NO DATA\n");
     return false;
   }
 
