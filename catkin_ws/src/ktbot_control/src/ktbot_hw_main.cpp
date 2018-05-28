@@ -55,10 +55,9 @@ int main(int argc, char** argv)
   ktbot_hw_interface->init();
 
   // Start the control loop
+  ROS_INFO_NAMED("ktbot_hw_interface", "Entering HW control loop"); 
   ros_control_boilerplate::GenericHWControlLoop control_loop(nh, ktbot_hw_interface);
-
-  // Wait until shutdown signal recieved
-  ros::waitForShutdown();
+  control_loop.run(); // Blocks until shutdown signal received
 
   return 0;
 }

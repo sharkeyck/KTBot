@@ -18,8 +18,7 @@
     <rosparam file="$(find ktbot_control)/config/ktbot_controllers.yaml" command="load"/>
 
     <!-- Load controller manager -->
-    <node name="ros_control_controller_manager" pkg="controller_manager" type="controller_manager" respawn="false"
-    output="screen" args="spawn joint_state_controller wheel_diff_drive_controller" />
+    <node name="ros_control_controller_manager" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller wheel_diff_drive_controller" />
 
     <!-- Convert joint states to /tf tranforms -->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>

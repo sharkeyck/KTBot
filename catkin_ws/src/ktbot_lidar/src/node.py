@@ -23,9 +23,9 @@ class LidarNode:
         self.scan.range_min = Lidar.MIN_RANGE
         self.scan.range_max = Lidar.MAX_RANGE
 
-        self.lidar = Lidar(self.port, cb=self.onLidarData)
         self.scanPub = rospy.Publisher('laser_scan', LaserScan, queue_size=10)
         self.scanSub = rospy.Subscriber("set_spin", Bool, self.onSetSpin)
+        self.lidar = Lidar(self.port, cb=self.onLidarData)
 
 
     def onLidarData(self, ranges):
