@@ -18,6 +18,10 @@ bridge:
     msg_type: nav_msgs.msg:Odometry
     topic_from: wheel_diff_drive_controller/odom
     topic_to: /ros/ktbot0/odom
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: tf.msg:tfMessage
+    topic_from: /tf
+    topic_to: /ros/ktbot0/tf
   # receive commands
   - factory: mqtt_bridge.bridge:MqttToRosBridge
     msg_type: geometry_msgs.msg:Twist
