@@ -15,11 +15,15 @@ STDR simulator launcher
 
 ## Next steps
 
-- Fix MQTT data exception on laser_scan receive by ktbrain_core
+- Fix gazebo model for new base size
+- Publish correct transforms such as base_laser_link
+- get RViz working!
+- GMAPPING AND MOOOOOOORE!
 
 - Mechanical fixes
   - do auto port recognition
   - More stable wheel base
+
 - Software
   -
 - Driver fixes
@@ -51,6 +55,8 @@ For V2
 
 - inject
 - paho-mqtt
+- msgpack
+- pyserial
 
 ## Gazebo Woes
 
@@ -59,8 +65,27 @@ For V2
 - Install gazebo7 as the ros-gazebo package requires it
 - URDF spec needed for running a ros robot
 
-## Utilities
+## Odroid
+- Installed Ubuntu 16.04, added wifi to network interfaces, no wpa-config
+- Adding zsh, git, vim
+- installed ros-kinetic-ros-base
+- added KTBot repo, missing the followig dependencies:
+  - ros-kinetic-ros-control-boilerplate
+  - ros-kinetic-joint-state-controller
+  - ros-kinetic-robot-state-publisher
+  - ros-kinetic-diff-drive-controller
+  - davetcoleman/ros-control-boilerplate repo from Github
+  - davetcoleman/gflags from Github NOPE, use: libgflags-dev
+  - ros-kinetic-mqtt-bridge
+  - python-pip: paho-mqtt, inject, msgpack, pyserial
+  - ros-kinetic-ros-control, ros-kinetic-ros-controllers
+  - ssh
+  - ros-kinetic-xacro
+- echo catkin_ws/devel/setup.zsh to zshrc
+-changed hostname from odroid to ktbot- login as kt, /etc/hosts and /etc/hostname 
+-installed avahi daemon for mDNS things
 
+ 
 ### Debugging servos
 
 1. roscd lx16a_driver && cd src
