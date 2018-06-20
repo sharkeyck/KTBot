@@ -8,7 +8,7 @@
   <xacro:property name="INF" value="1.0e+50"/>
   <xacro:property name="PI" value="3.1415926535897931"/>
   <xacro:property name="MAX_RPS" value="3.2724895833333334"/>
-  
+
   <xacro:macro name="servo" params="suffix">
     <link name="servo_${suffix}">
       <inertial>
@@ -32,9 +32,9 @@
     <link name='wheel_${suffix}'>
       <inertial>
         <!-- actual mass is ~0.03 -->
-        <mass value="0.30"/> 
+        <mass value="0.30"/>
         <!-- We multiply the inertial values by 100x to prevent slippage/loss of precision by ODE. -->
-        <inertia ixx="8.48e-04" ixy="0" ixz="0" iyy="8.48e-04" iyz="0" izz="1.584e-03"/> 
+        <inertia ixx="8.48e-04" ixy="0" ixz="0" iyy="8.48e-04" iyz="0" izz="1.584e-03"/>
       </inertial>
       <visual name='visual'>
         <geometry>
@@ -49,7 +49,7 @@
       </collision>
     </link>
     <joint name='wheel_${suffix}_joint' type='continuous'>
-      <origin xyz="0.04 ${reflect*0.087537} -0.013883" rpy="${PI/2} ${PI/2} 0"/>
+      <origin xyz="0.0725 ${reflect*0.137537} -0.013883" rpy="${PI/2} ${PI/2} 0"/>
       <parent link="base_link"/>
       <child link="wheel_${suffix}"/>
       <limit effort="7" velocity="${MAX_RPS}"/>
@@ -66,7 +66,7 @@
       </actuator>
     </transmission>
   </xacro:macro>
-  
+
   <!-- <origin xyz="0.000537 0.007761 0.214993" rpy="0 0 0"/> -->
 
   <link name='base_link'>
@@ -76,19 +76,20 @@
     </inertial>
     <visual name='visual'>
       <geometry>
-        <box size="0.135 0.15 0.0033"/>
+        <box size="0.2 0.25 0.0033"/>
       </geometry>
       <material name="white"/>
       <transparency>0.5</transparency>
     </visual>
     <collision name='collision'>
       <geometry>
-        <box size="0.135 0.15 0.0033"/>
+        <!-- <box size="0.135 0.15 0.0033"/> -->
+        <box size="0.2 0.25 0.0033"/>
       </geometry>
     </collision>
 
     <visual name='caster_visual'>
-      <origin xyz="-0.05 0.0 -0.038" rpy="0 0 0"/>
+      <origin xyz="-0.0825 0.0 -0.038" rpy="0 0 0"/>
       <geometry>
         <sphere radius="0.01"/>
       </geometry>
@@ -96,24 +97,24 @@
     </visual>
 
     <collision name='caster_collision'>
-      <origin xyz="-0.05 0.0 -0.038" rpy="0 0 0"/>
+      <origin xyz="-0.0825 0.0 -0.038" rpy="0 0 0"/>
       <geometry>
         <sphere radius="0.01"/>
       </geometry>
     </collision>
   </link>
-  
+
   <xacro:servo suffix='left'>
   </xacro:servo>
   <xacro:servo suffix='right'>
   </xacro:servo>
   <joint name='servo_l_fix' type='fixed'>
-    <origin xyz="0.03 -0.057537 -0.013883" rpy="0 -${PI} 0"/>
+    <origin xyz="0.0625 -0.107537 -0.013883" rpy="0 -${PI} 0"/>
     <parent link="base_link"/>
     <child link="servo_left"/>
   </joint>
   <joint name='servo_r_fix' type='fixed'>
-    <origin xyz="0.03 0.057537 -0.013883" rpy="0 0 0"/>
+    <origin xyz="0.0625 0.107537 -0.013883" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="servo_right"/>
   </joint>
@@ -139,7 +140,7 @@
     </collision>
   </link>
   <joint name='back_stack_f' type='fixed'>
-    <origin xyz="-0.05 0 -0.02" rpy="0 0 0"/>
+    <origin xyz="-0.0825 0 -0.02" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="back_stack"/>
   </joint>
@@ -162,7 +163,7 @@
     </collision>
   </link>
   <joint name='lidar_top' type='fixed'>
-    <origin xyz="0.02 0 0.06" rpy="0 0 0"/>
+    <origin xyz="0.0525 0 0.06" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="lidar"/>
   </joint>

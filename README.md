@@ -15,7 +15,6 @@ STDR simulator launcher
 
 ## Next steps
 
-- Fix gazebo model for new base size
 - Publish correct transforms such as base_laser_link
 - get RViz working!
 - GMAPPING AND MOOOOOOORE!
@@ -82,10 +81,10 @@ For V2
   - ssh
   - ros-kinetic-xacro
 - echo catkin_ws/devel/setup.zsh to zshrc
--changed hostname from odroid to ktbot- login as kt, /etc/hosts and /etc/hostname 
+-changed hostname from odroid to ktbot- login as kt, /etc/hosts and /etc/hostname
 -installed avahi daemon for mDNS things
 
- 
+
 ### Debugging servos
 
 1. roscd lx16a_driver && cd src
