@@ -1,10 +1,13 @@
 <launch>
   <!-- Push into a namspace so mqtt is still valid even if brain and core are both run on the same host. -->
 
-  <!-- Load example URDF -->
-  <param name="robot_description" command="$(find xacro)/xacro.py '$(find ktbot_description)/urdf/ktbot.xacro'" />
-
   <group ns="ktbrain">
+    <!-- Load example URDF -->
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find ktbot_description)/urdf/ktbot.xacro'" />
+
+    <!-- Convert joint states to /tf tranforms -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
     <node name="mqtt_bridge" pkg="mqtt_bridge" type="mqtt_bridge_node.py" output="screen">
       <rosparam command="load" file="$(find ktbot_core)/config/ktbrain_bridge_params.yaml" />
     </node>
@@ -14,9 +17,16 @@
       <param name="temporalUpdate" value="5.0"/>
     </node>
 
+    <!-- we remap the ktsim topics when we need them, so as not to involve MQTT -->
+    <node name="remap_sim_cmd_vel" pkg="topic_tools" type="relay" args="cmd_vel /ktbot/wheel_diff_drive_controller/cmd_vel">
+     <param name="stealth" value="true"/>
+    </node>
+
     <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
-      <!--<param name="default_topic" value="/ktbot/wheel_diff_drive_controller/cmd_vel"/>-->
+      <!--<param name="default_topic" value=""/>-->
       <param name="default_topic" value="cmd_vel"/>
     </node>
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ktbot_description)/config/ktbot_navigation.rviz"></node>
   </group>
 </launch>

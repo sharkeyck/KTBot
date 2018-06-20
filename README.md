@@ -67,6 +67,10 @@ For V2
 2. python example.py /dev/ttyUSB0 1
    3. Servo ids are 0 or 1
 
+### Debugging Gazebo
+
+1. "BadValue" when trying to run? Downgrade nvidia drivers to 340.12
+
 ## Failed At:
 
 * Installing Qemu for ROS Compilation that Doesn't Suck
