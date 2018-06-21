@@ -33,7 +33,7 @@ class Lidar():
                 if not packet:
                     continue
                 (speed_rpm, data) = packet
-            except e:
+            except Exception, e:
                 print(e)
             for d in data:
                 (angle, dist_m, is_bad_data, is_low_quality) = d
