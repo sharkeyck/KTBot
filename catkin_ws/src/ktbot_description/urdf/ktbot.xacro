@@ -145,7 +145,7 @@
     <child link="back_stack"/>
   </joint>
 
-  <link name='lidar'>
+  <link name='base_laser_link'>
     <inertial>
       <mass value="0.1"/>
       <inertia ixx="4.136e-05" ixy="0" ixz="0" iyy="4.136e-05" iyz="0" izz="7.605e-05"/>
@@ -165,6 +165,6 @@
   <joint name='lidar_top' type='fixed'>
     <origin xyz="0.0525 0 0.06" rpy="0 0 0"/>
     <parent link="base_link"/>
-    <child link="lidar"/>
+    <child link="base_laser_link"/>
   </joint>
 </robot>

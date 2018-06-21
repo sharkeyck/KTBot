@@ -15,7 +15,7 @@
     <minDepth value="0.1"/>
     <maxVel value="100.0"/>
     <material value="Gazebo/Gray"/>
-  </gazebo>  
+  </gazebo>
 
   <gazebo reference="wheel_left">
     <mu1 value="1000.0"/>
@@ -64,7 +64,7 @@
       </ray>
       <plugin name="gazebo_ros_head_control" filename="libgazebo_ros_gpu_laser.so">
         <topicName>laser_scan</topicName>
-        <frameName>/lidar</frameName>
+        <frameName>/base_laser_link</frameName>
       </plugin>
     </sensor>
   </gazebo>

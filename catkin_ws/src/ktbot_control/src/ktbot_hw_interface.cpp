@@ -43,7 +43,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <termios.h>
-#include <stdlib.h> 
+#include <stdlib.h>
 
 #include <ktbot_control/ktbot_hw_interface.h>
 
@@ -68,7 +68,7 @@ namespace ktbot_control
 KTBotHWInterface::KTBotHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
   : ros_control_boilerplate::GenericHWInterface(nh, urdf_model)
 {
-  // Discover the serial device 
+  // Discover the serial device
   //const char* path = get_path_for_serial_id("1a86_USB2.0-Serial");
   const char* port = "/dev/ttyUSB0";
 
@@ -80,7 +80,20 @@ KTBotHWInterface::KTBotHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
     fcntl(ser, F_SETFL, 0);
     ROS_INFO_NAMED("ktbot_hw_interface", "port opened: %s\n", port);
   }
-  
+
+  struct termios settings;
+  tcgetattr(fd, &settings);
+  cfsetospeed(&settings, B115200); /* baud rate */
+  settings.c_cflag &= ~PARENB; /* no parity */
+  settings.c_cflag &= ~CSTOPB; /* 1 stop bit */
+  settings.c_cflag &= ~CSIZE;
+  settings.c_cflag |= CS8 | CLOCAL; /* 8 bits */
+  settings.c_lflag = ICANON; /* canonical mode */
+  settings.c_oflag &= ~OPOST; /* raw output */
+
+  tcsetattr(fd, TCSANOW, &settings); /* apply the settings */
+  tcflush(fd, TCOFLUSH);
+
   left.attach(ser, LEFT_JOINT_SERVO_ID);
   right.attach(ser, RIGHT_JOINT_SERVO_ID);
 
@@ -109,9 +122,9 @@ void KTBotHWInterface::read(ros::Duration &elapsed_time)
     double newvel = double(newpos - joint_position_[LEFT_JOINT_ID]) / elapsed_time.toSec();
     joint_velocity_[LEFT_JOINT_ID] = (joint_velocity_[LEFT_JOINT_ID] * (1.0 - RUNNING_AVG_NEW_WEIGHT) + newvel * RUNNING_AVG_NEW_WEIGHT);
     joint_position_[LEFT_JOINT_ID] = newpos;
-    
+
     // ROS_INFO_NAMED("ktbot_hw_interface", "%02f\t%02f\t%02f\t%02f\n", deg, d, left_rotations, newpos);
-    
+
     // Note: Joint effort not necessary for velocity
     left_prev_deg = deg;
   } else {
@@ -126,9 +139,9 @@ void KTBotHWInterface::read(ros::Duration &elapsed_time)
     double newvel = double(newpos - joint_position_[RIGHT_JOINT_ID]) / elapsed_time.toSec();
     joint_velocity_[RIGHT_JOINT_ID] = (joint_velocity_[RIGHT_JOINT_ID] * (1.0 - RUNNING_AVG_NEW_WEIGHT) + newvel * RUNNING_AVG_NEW_WEIGHT);
     joint_position_[RIGHT_JOINT_ID] = newpos;
-    
+
     // ROS_INFO_NAMED("ktbot_hw_interface", "%02f\t%02f\t%02f\t%02f\n", deg, d, left_rotations, newpos);
-    
+
     // Note: Joint effort not necessary for velocity
     left_prev_deg = deg;
   } else {

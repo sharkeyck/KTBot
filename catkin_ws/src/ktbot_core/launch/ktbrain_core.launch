@@ -1,7 +1,6 @@
 <launch>
-  <!-- Push into a namspace so mqtt is still valid even if brain and core are both run on the same host. -->
 
-  <group ns="ktbrain">
+  <group ns="ktbot">
     <!-- Load example URDF -->
     <param name="robot_description" command="$(find xacro)/xacro.py '$(find ktbot_description)/urdf/ktbot.xacro'" />
 
