@@ -191,7 +191,7 @@ void KTBotHWInterface::read(ros::Duration &elapsed_time)
     // ROS_INFO_NAMED("ktbot_hw_interface", "%02f\t%02f\t%02f\t%02f\n", deg, d, left_rotations, newpos);
 
     // Note: Joint effort not necessary for velocity
-    left_prev_deg = deg;
+    right_prev_deg = deg;
   } else {
     ROS_INFO_NAMED("ktbot_hw_interface", "No data from right wheel\n");
   }
