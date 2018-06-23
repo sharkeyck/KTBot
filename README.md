@@ -15,8 +15,7 @@ STDR simulator launcher
 
 ## Next steps
 
-- Publish correct transforms such as base_laser_link
-- get RViz working!
+- Fix odometry (robo-spazzing, probably wrong units or bad odom code in reading servos)
 - GMAPPING AND MOOOOOOORE!
 
 - Mechanical fixes
@@ -83,13 +82,14 @@ For V2
 - echo catkin_ws/devel/setup.zsh to zshrc
 -changed hostname from odroid to ktbot- login as kt, /etc/hosts and /etc/hostname
 -installed avahi daemon for mDNS things
+-add kt user to dialout group
 
 
 ### Debugging servos
 
 1. roscd lx16a_driver && cd src
 2. python example.py /dev/ttyUSB0 1
-   3. Servo ids are 0 or 1
+3. Servo ids are 0 or 1
 
 ### Debugging Gazebo
 
