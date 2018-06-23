@@ -26,7 +26,7 @@ wheel_diff_drive_controller:
   left_wheel: ['wheel_left_joint']
   right_wheel: ['wheel_right_joint']
 
-  wheel_separation: 0.175074
+  wheel_separation: 0.275
 
   # Odometry covariances for the encoder output of the robot. These values should
   # be tuned to your robot's sample odometry data, but these values are a good place
