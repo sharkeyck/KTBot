@@ -1,0 +1,170 @@
+<?xml version='1.0'?>
+<robot name="arb" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Import all Gazebo-customization elements, including Gazebo colors -->
+  <xacro:include filename="$(find arb_description)/urdf/arb.gazebo" />
+  <!-- Import Rviz colors -->
+  <xacro:include filename="$(find arb_description)/urdf/materials.xacro" />
+
+  <xacro:property name="INF" value="1.0e+50"/>
+  <xacro:property name="PI" value="3.1415926535897931"/>
+  <xacro:property name="MAX_RPS" value="3.2724895833333334"/>
+
+  <xacro:macro name="servo" params="suffix">
+    <link name="servo_${suffix}">
+      <inertial>
+        <mass value="0.052"/>
+        <inertia ixx="8.02e-06" ixy="0" ixz="0" iyy="1.188e-05" iyz="0" izz="1.448e-05"/>
+      </inertial>
+      <visual name='visual'>
+        <geometry>
+          <box size="0.046 0.035 0.025"/>
+        </geometry>
+        <material name="dgrey"/>
+      </visual>
+      <collision name='collision'>
+        <geometry>
+          <box size="0.046 0.035 0.025"/>
+        </geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+  <xacro:macro name="wheel" params="suffix reflect">
+    <link name='wheel_${suffix}'>
+      <inertial>
+        <!-- actual mass is ~0.03 -->
+        <mass value="0.30"/>
+        <!-- We multiply the inertial values by 100x to prevent slippage/loss of precision by ODE. -->
+        <inertia ixx="8.48e-04" ixy="0" ixz="0" iyy="8.48e-04" iyz="0" izz="1.584e-03"/>
+      </inertial>
+      <visual name='visual'>
+        <geometry>
+          <cylinder radius="0.0325" length="0.015"/>
+        </geometry>
+        <material name="dgrey"/>
+      </visual>
+      <collision name='collision'>
+        <geometry>
+          <cylinder radius="0.0325" length="0.015"/>
+        </geometry>
+      </collision>
+    </link>
+    <joint name='wheel_${suffix}_joint' type='continuous'>
+      <origin xyz="0.0725 ${reflect*0.137537} -0.013883" rpy="${PI/2} ${PI/2} 0"/>
+      <parent link="base_link"/>
+      <child link="wheel_${suffix}"/>
+      <limit effort="7" velocity="${MAX_RPS}"/>
+      <axis xyz="0 0 -1"/>
+      <dynamics damping="1.0" friction="0.00"/>
+    </joint>
+    <transmission name="wheel_${suffix}_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="wheel_${suffix}_joint">
+        <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="wheel_${suffix}_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+
+  <!-- <origin xyz="0.000537 0.007761 0.214993" rpy="0 0 0"/> -->
+
+  <link name='base_link'>
+    <inertial>
+      <mass value="0.41"/>
+      <inertia ixx="0.00076912" ixy="0" ixz="0" iyy="0.00062306" iyz="0" izz="0.00139144"/>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <box size="0.2 0.25 0.0033"/>
+      </geometry>
+      <material name="white"/>
+      <transparency>0.5</transparency>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <!-- <box size="0.135 0.15 0.0033"/> -->
+        <box size="0.2 0.25 0.0033"/>
+      </geometry>
+    </collision>
+
+    <visual name='caster_visual'>
+      <origin xyz="-0.0825 0.0 -0.038" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.01"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+
+    <collision name='caster_collision'>
+      <origin xyz="-0.0825 0.0 -0.038" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.01"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <xacro:servo suffix='left'>
+  </xacro:servo>
+  <xacro:servo suffix='right'>
+  </xacro:servo>
+  <joint name='servo_l_fix' type='fixed'>
+    <origin xyz="0.0625 -0.107537 -0.013883" rpy="0 -${PI} 0"/>
+    <parent link="base_link"/>
+    <child link="servo_left"/>
+  </joint>
+  <joint name='servo_r_fix' type='fixed'>
+    <origin xyz="0.0625 0.107537 -0.013883" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="servo_right"/>
+  </joint>
+
+  <xacro:wheel suffix='left' reflect="1"/>
+  <xacro:wheel suffix='right' reflect="-1"/>
+
+  <link name='back_stack'>
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="2.3e-06" ixy="0" ixz="0" iyy="1.98e-06" iyz="0" izz="2.35e-06"/>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <box size="0.035 0.04 0.034"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <box size="0.035 0.04 0.034"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name='back_stack_f' type='fixed'>
+    <origin xyz="-0.0825 0 -0.02" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="back_stack"/>
+  </joint>
+
+  <link name='base_laser_link'>
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="4.136e-05" ixy="0" ixz="0" iyy="4.136e-05" iyz="0" izz="7.605e-05"/>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <cylinder radius="0.039" length="0.02"/>
+      </geometry>
+      <material name="dgrey"/>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <cylinder radius="0.039" length="0.02"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name='lidar_top' type='fixed'>
+    <origin xyz="0.0525 0 0.06" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="base_laser_link"/>
+  </joint>
+</robot>

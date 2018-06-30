@@ -15,15 +15,20 @@ STDR simulator launcher
 
 ## Next steps
 
-- Fix odometry (robo-spazzing, probably wrong units or bad odom code in reading servos)
+
 - GMAPPING AND MOOOOOOORE!
+- Clearing the map easily
+- Faster map updates
+- Faster map age out
+
 
 - Mechanical fixes
   - do auto port recognition
   - More stable wheel base
 
 - Software
-  -
+  -Re-setup auto ros start on bot
+  - Try out Google Cartographer (instead of slam_gmapping) https://google-cartographer-ros.readthedocs.io/en/latest/
 - Driver fixes
   - Fix servo settings for drifting servo
   - PWM control of wheel speed in servo
@@ -41,6 +46,7 @@ For V2
 - Fix bot size & cable routing/management
 - Gear wheels for higher speed
 - ARBS
+- Figure out why there's checksum failures at particular angle values (email support@lewansoul.com?)
 
 ## Packages
 

@@ -49,6 +49,13 @@
 
 uint8_t LobotCheckSum(uint8_t buf[])
 {
+  // For certain checksums, the servos consistently send a checksum that's 3 off.
+  // e.g. for a position read request and response:
+  // SEND: 55:55:01:03:1c:df
+  // RECV: fb:55:01:05:1c:0a:03:cd
+  // expected checksum d0, got cd.
+  // This happens at particular positions of the servo, and across multiple servos.
+  // ¯\_(ツ)_/¯
   uint8_t i;
   uint16_t temp = 0;
   for (i = 2; i < buf[3] + 2; i++) {
@@ -60,7 +67,7 @@ uint8_t LobotCheckSum(uint8_t buf[])
 }
 
 uint16_t ConvertAngle(float degree) {
-  return (degree > 240) ? 1000 : (degree < 0) ? 0 : uint16_t(degree / 0.24); 
+  return (degree > 240) ? 1000 : (degree < 0) ? 0 : uint16_t(degree / 0.24);
 }
 
 LX16AServo::LX16AServo() {}
@@ -108,12 +115,12 @@ bool LX16AServo::waitForAvailable() {
   FD_ZERO(&readset);
   FD_SET(ser, &readset);
   char n = select(ser + 1, &readset, 0, 0, &timeout);
-  
+
   // check if an error has occured
   if(n < 0) {
     perror("select failed\n");
   } else if (n == 0) {
-    return false;   
+    return false;
   } else {
     return true;
   }
@@ -472,7 +479,7 @@ void LX16AServo::setServoMode() {
     0,
     0,
     0,
-    0 
+    0
   };
   LX16AServo::writePacket(cmd, 5);
 }
@@ -484,7 +491,7 @@ void LX16AServo::setWheelMode(int16_t speed) {
     1,
     0,
     GET_LOW_BYTE(clampedSpeed),
-    GET_HIGH_BYTE(clampedSpeed) 
+    GET_HIGH_BYTE(clampedSpeed)
   };
   LX16AServo::writePacket(cmd, 5);
 }
