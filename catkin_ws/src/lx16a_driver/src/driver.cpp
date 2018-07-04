@@ -56,6 +56,7 @@ uint8_t LobotCheckSum(uint8_t buf[])
   }
   temp = ~temp;
   i = (uint8_t)temp;
+  // printf("%x\n", i);
   return i;
 }
 
@@ -177,17 +178,18 @@ bool LX16AServo::readPacket(uint8_t *ret) {
           }
           printf("\n");
           */
+          
 
           if (LobotCheckSum(recvBuf) == recvBuf[dataCount - 1]) {
             frameStarted = false;
             memcpy(ret, recvBuf + 4, dataLength);
 
             // Give the serial line time to clear (reduces error count)
-            usleep(100);
+            usleep(200);
 
             return true;
           }
-          printf("CHECKSUM FAIL");
+          printf("CHECKSUM FAIL\n");
           return false;
         }
       }

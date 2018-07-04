@@ -50,10 +50,10 @@
 using std::string;
 
 #define LEFT_JOINT_ID 0
-#define LEFT_JOINT_SERVO_ID 0
+#define LEFT_JOINT_SERVO_ID 1
 
 #define RIGHT_JOINT_ID 1
-#define RIGHT_JOINT_SERVO_ID 1
+#define RIGHT_JOINT_SERVO_ID 0
 
 #define RUNNING_AVG_NEW_WEIGHT 0.5
 #define ROLLOVER_THRESHOLD_DEG 100
@@ -142,6 +142,8 @@ KTBotHWInterface::KTBotHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
 
   left.attach(ser, LEFT_JOINT_SERVO_ID);
   right.attach(ser, RIGHT_JOINT_SERVO_ID);
+  left.setCompliance(false);
+  right.setCompliance(false);
 
   left_rotations = 0;
   right_rotations = 0;
@@ -193,6 +195,7 @@ void KTBotHWInterface::read(ros::Duration &elapsed_time)
   } else {
     ROS_INFO_NAMED("ktbot_hw_interface", "No data from right wheel\n");
   }
+
 }
 
 void KTBotHWInterface::write(ros::Duration &elapsed_time)
@@ -204,15 +207,21 @@ void KTBotHWInterface::write(ros::Duration &elapsed_time)
   // TODO: Rate-limit writes if no change in position command
   // ROS_INFO_NAMED("ktbot_hw_interface", "%02f\n", joint_velocity_command_[LEFT_JOINT_ID]);
   if (left_prev_vel_cmd != joint_velocity_command_[LEFT_JOINT_ID]) {
-    left.setWheelMode(int16_t(joint_velocity_command_[LEFT_JOINT_ID] * 1000 / MAX_RPM));
+    //linearizing joint velocity command
+    float left_temp_cmd = joint_velocity_command_[LEFT_JOINT_ID] * 1000 / MAX_RPM;
+    left_temp_cmd = log(abs(left_temp_cmd) +1)*333;
+    left_temp_cmd *= (joint_velocity_command_[LEFT_JOINT_ID] > 0) ? 1 : -1;
+    left.setWheelMode(int16_t(left_temp_cmd));
     left_prev_vel_cmd = joint_velocity_command_[LEFT_JOINT_ID];
   }
   if (right_prev_vel_cmd != joint_velocity_command_[RIGHT_JOINT_ID]) {
-    right.setWheelMode(int16_t(joint_velocity_command_[RIGHT_JOINT_ID] * -1000 / MAX_RPM));
+    //linearizing joint velocity command
+    float right_temp_cmd = joint_velocity_command_[RIGHT_JOINT_ID] * 1000 / MAX_RPM;
+    right_temp_cmd = log(abs(right_temp_cmd) +1)*333;
+    right_temp_cmd *= (joint_velocity_command_[RIGHT_JOINT_ID] > 0) ? -1 : 1;
+    right.setWheelMode(int16_t(right_temp_cmd));
     right_prev_vel_cmd = joint_velocity_command_[RIGHT_JOINT_ID];
   }
-
-  // TODO joint_velocity_command_
 }
 
 void KTBotHWInterface::enforceLimits(ros::Duration &period)
