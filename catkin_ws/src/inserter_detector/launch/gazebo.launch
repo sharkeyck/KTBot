@@ -19,10 +19,6 @@
     <arg name="headless" value="$(arg headless)"/>
   </include>
 
-  <!-- Load the URDF into the ROS Parameter Server -->
-  <param name="robot_description"
-    command="$(find xacro)/xacro --inorder '$(find inserter_detector)/simulation/realsense_d435/realsense_d435.xacro'" />
-
   <node name="realsense_tf" pkg="tf" type="static_transform_publisher" args="0 0 3 0 3.14 0 world realsense 100" />
 
   <!--
