@@ -1,0 +1,13 @@
+
+# DEPRECATED
+
+# Publish all joint states -----------------------------------
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50
+
+
+z_axis_controller:
+  type: "velocity_controllers/JointPositionController"
+  joint: z_axis
+  pid: {p: 100.0, i: 0.01, d: 1.0}

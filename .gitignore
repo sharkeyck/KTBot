@@ -3,3 +3,5 @@ devel/
 
 
 *.pyc
+src/arb_screw_detector/lib/*
+src/arb_screw_detector/share/*

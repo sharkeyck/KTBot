@@ -33,13 +33,9 @@
   </node>
 
   <!-- ros_control rrbot launch file -->
-  <!--include file="$(find rrbot_control)/launch/rrbot_control.launch" /-->
+
 
   <rosparam command="load" file="$(find arb_description)/config/joints.yaml"/>
 
-  <node name="arb_controller_spawner" pkg="controller_manager" type="spawner" args="joint_state_controller wheel_diff_drive_controller kt_wheel_control"/>
-
-  <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
-    <param name="default_topic" value="/wheel_diff_drive_controller/cmd_vel"/>
-  </node>
+  <node name="arb_controller_spawner" pkg="controller_manager" type="spawner" args="joint_state_controller z_axis_controller"/>
 </launch>
