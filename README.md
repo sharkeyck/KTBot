@@ -1,6 +1,5 @@
 # KTBot
 
-
 ## Running the Robot
 
 `roslaunch ktbot stdr_server_ktbot.launch`
@@ -18,8 +17,7 @@ STDR simulator launcher
 
 - GMAPPING AND MOOOOOOORE!
 - Clearing the map easily
-- Faster map updates
-- Faster map age out
+- try out google mapping thing: cartographer?
 
 
 - Mechanical fixes
@@ -30,7 +28,6 @@ STDR simulator launcher
   -Re-setup auto ros start on bot
   - Try out Google Cartographer (instead of slam_gmapping) https://google-cartographer-ros.readthedocs.io/en/latest/
 - Driver fixes
-  - Fix servo settings for drifting servo
   - PWM control of wheel speed in servo
 - Gazebo
   - Create a servo simulator model plugin (LX-16A) that parses/interprets serial data and affects a rotating joint. Consider upstreaming it in gazebo_ros_pkgs.
@@ -78,6 +75,7 @@ For V2
   - ros-kinetic-joint-state-controller
   - ros-kinetic-robot-state-publisher
   - ros-kinetic-diff-drive-controller
+  - ros-kinetic-rqt-common-plugins, ros-kinetic-rqt-robot-plugins, ros-kinetic-desktop-full
   - davetcoleman/ros-control-boilerplate repo from Github
   - davetcoleman/gflags from Github NOPE, use: libgflags-dev
   - ros-kinetic-mqtt-bridge
@@ -90,7 +88,6 @@ For V2
 -installed avahi daemon for mDNS things
 -add kt user to dialout group
 
-
 ### Debugging servos
 
 1. roscd lx16a_driver && cd src
@@ -100,6 +97,25 @@ For V2
 ### Debugging Gazebo
 
 1. "BadValue" when trying to run? Downgrade nvidia drivers to 340.12
+
+### Intel Realsense D435
+
+Example lsusb: `Bus 009 Device 002: ID 8086:0b07 Intel Corp.`
+
+Installation for realsense example libs:
+
+* `git clone https://github.com/IntelRealSense/librealsense.git`
+* `sudo apt-get install libglfw3-dev`
+* `cmake . && make`
+
+To reload USB 3 drivers if/when they crash:
+```shell
+echo -n "0000:02:00.0" | sudo tee /sys/bus/pci/drivers/xhci_hcd/unbind
+echo -n "0000:02:00.0" | sudo tee /sys/bus/pci/drivers/xhci_hcd/bind
+```
+
+Installation for ros: follow instructions at https://github.com/intel-ros/realsense
+
 
 ## Failed At:
 

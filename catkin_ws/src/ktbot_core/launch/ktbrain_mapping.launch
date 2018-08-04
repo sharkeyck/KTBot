@@ -17,8 +17,8 @@
     <rosparam file="$(find ktbot_core)/config/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find ktbot_core)/config/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find ktbot_core)/config/base_local_planner_params.yaml" command="load" />
-    <remap from="/odom" to="/ktbot/wheel_diff_drive_controller/odom"/>
-    <remap from="/cmd_vel" to="/ktbot/wheel_diff_drive_controller/cmd_vel"/>
-    <remap from="/map" to="/ktbrain/map"/>
+    <remap from="/odom" to="/ktbot/odom"/>
+    <remap from="/cmd_vel" to="/ktbot/cmd_vel"/>
+    <remap from="/map" to="/ktbot/map"/>
   </node>
 </launch>

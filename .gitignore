@@ -1,7 +1,9 @@
 build/
 devel/
 
-
+*.img
+*.iso
+*.backup
 *.pyc
 src/arb_screw_detector/lib/*
 src/arb_screw_detector/share/*
