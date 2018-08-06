@@ -59,8 +59,11 @@ using std::string;
 #define ROLLOVER_THRESHOLD_DEG 100
 #define PI 3.14159265359
 
-// @ 7.4v
-#define MAX_RPM 3.27249235
+// Max based on observed speed of servos
+// https://docs.google.com/spreadsheets/d/1uo1gqp0hbpzP6kxLgmkKQCryi_hYWL6A87Cw1xKioBs/edit?usp=sharing
+#define MAX_RAD_PER_SEC 41.888
+#define MIN_RAD_PER_SEC 15.71
+
 
 int set_interface_attribs (int fd, int speed, int parity) {
   struct termios tty;
@@ -198,29 +201,36 @@ void KTBotHWInterface::read(ros::Duration &elapsed_time)
 
 }
 
+// 400RPM max
+//
+
 void KTBotHWInterface::write(ros::Duration &elapsed_time)
 {
   // Safety
   enforceLimits(elapsed_time);
 
-  // Just go by position for now
-  // TODO: Rate-limit writes if no change in position command
-  // ROS_INFO_NAMED("ktbot_hw_interface", "%02f\n", joint_velocity_command_[LEFT_JOINT_ID]);
-  if (left_prev_vel_cmd != joint_velocity_command_[LEFT_JOINT_ID]) {
-    //linearizing joint velocity command
-    float left_temp_cmd = joint_velocity_command_[LEFT_JOINT_ID] * 1000 / MAX_RPM;
-    left_temp_cmd = log(abs(left_temp_cmd) +1)*333;
-    left_temp_cmd *= (joint_velocity_command_[LEFT_JOINT_ID] > 0) ? 1 : -1;
-    left.setWheelMode(int16_t(left_temp_cmd));
-    left_prev_vel_cmd = joint_velocity_command_[LEFT_JOINT_ID];
+  float left_temp_cmd = max(min(joint_velocity_command_[LEFT_JOINT_ID], MAX_RAD_PER_SEC), -MAX_RAD_PER_SEC);
+  if (abs(left_temp_cmd) < MIN_RAD_PER_SEC) {
+    left_temp_cmd = ((left_temp_cmd < 0) ? -1 : 1) * MIN_RAD_PER_SEC;
   }
-  if (right_prev_vel_cmd != joint_velocity_command_[RIGHT_JOINT_ID]) {
-    //linearizing joint velocity command
-    float right_temp_cmd = joint_velocity_command_[RIGHT_JOINT_ID] * 1000 / MAX_RPM;
-    right_temp_cmd = log(abs(right_temp_cmd) +1)*333;
-    right_temp_cmd *= (joint_velocity_command_[RIGHT_JOINT_ID] > 0) ? -1 : 1;
+  float right_temp_cmd = max(min(joint_velocity_command_[RIGHT_JOINT_ID], MAX_RAD_PER_SEC), -MAX_RAD_PER_SEC);
+  if (abs(right_temp_cmd) < MIN_RAD_PER_SEC) {
+    right_temp_cmd = ((right_temp_cmd < 0) ? -1 : 1) * MIN_RAD_PER_SEC;
+  }
+
+  // https://docs.google.com/spreadsheets/d/1uo1gqp0hbpzP6kxLgmkKQCryi_hYWL6A87Cw1xKioBs/edit#gid=2143003403
+  // ROS_INFO_NAMED("ktbot_hw_interface", "%02f\n", joint_velocity_command_[LEFT_JOINT_ID]);
+  if (left_prev_vel_cmd != left_temp_cmd) {
+    // Convert to calibrated speed values
+    int16_t speed = (left_temp_cmd < 0) ? -(-left_tmp_cmd + 14.5) / 0.573 : (left_tmp_cmd + 8.58)/0.552;
+    left.setWheelMode(speed);
+    left_prev_vel_cmd = left_temp_cmd;
+  }
+  if (right_prev_vel_cmd != right_temp_cmd) {
+    // Convert to calibrated speed values
+    int16_t speed = (right_temp_cmd < 0) ? -(-right_tmp_cmd + 12.7) / 0.455 : (right_tmp_cmd + 19)/0.511;
     right.setWheelMode(int16_t(right_temp_cmd));
-    right_prev_vel_cmd = joint_velocity_command_[RIGHT_JOINT_ID];
+    right_prev_vel_cmd = right_temp_cmd;
   }
 }
 
