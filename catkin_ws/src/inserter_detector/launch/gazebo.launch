@@ -21,6 +21,14 @@
     <arg name="headless" value="$(arg headless)"/>
   </include>
 
+  <!-- Load the URDF into the ROS Parameter Server -->
+  <param name="robot_description"
+    command="$(find xacro)/xacro --inorder '$(find inserter_detector)/simulation/inserter/inserter.xacro'" />
+
+  <!-- Spawn robots -->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+    args="-urdf -model inserter -param robot_description"/>
+
   <node name="realsense_tf" pkg="tf" type="static_transform_publisher" args="0 0 3 0 3.14 0 world realsense 100" />
 
   <node name="inserter_detector" pkg="inserter_detector" type="node" output="screen">

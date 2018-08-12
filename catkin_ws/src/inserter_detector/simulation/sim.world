@@ -18,9 +18,9 @@
       <static>true</static>
     </include>
 
-    <include>
+    <!-- <include>
       <uri>model://cardboard_box</uri>
       <static>true</static>
-    </include>
+    </include> -->
   </world>
 </sdf>
