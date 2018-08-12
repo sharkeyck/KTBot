@@ -44,10 +44,13 @@
 #include <errno.h>
 #include <termios.h>
 #include <stdlib.h>
+#include <algorithm>
 
 #include <ktbot_control/ktbot_hw_interface.h>
 
 using std::string;
+using std::min;
+using std::max;
 
 #define LEFT_JOINT_ID 0
 #define LEFT_JOINT_SERVO_ID 1
@@ -222,14 +225,14 @@ void KTBotHWInterface::write(ros::Duration &elapsed_time)
   // ROS_INFO_NAMED("ktbot_hw_interface", "%02f\n", joint_velocity_command_[LEFT_JOINT_ID]);
   if (left_prev_vel_cmd != left_temp_cmd) {
     // Convert to calibrated speed values
-    int16_t speed = (left_temp_cmd < 0) ? -(-left_tmp_cmd + 14.5) / 0.573 : (left_tmp_cmd + 8.58)/0.552;
+    int16_t speed = (left_temp_cmd < 0) ? -(-left_temp_cmd + 14.5) / 0.573 : (left_temp_cmd + 8.58)/0.552;
     left.setWheelMode(speed);
     left_prev_vel_cmd = left_temp_cmd;
   }
   if (right_prev_vel_cmd != right_temp_cmd) {
     // Convert to calibrated speed values
-    int16_t speed = (right_temp_cmd < 0) ? -(-right_tmp_cmd + 12.7) / 0.455 : (right_tmp_cmd + 19)/0.511;
-    right.setWheelMode(int16_t(right_temp_cmd));
+    int16_t speed = (right_temp_cmd < 0) ? -(-left_temp_cmd + 12.7) / 0.455 : (left_temp_cmd + 19)/0.511;
+    right.setWheelMode(int16_t(speed));
     right_prev_vel_cmd = right_temp_cmd;
   }
 }

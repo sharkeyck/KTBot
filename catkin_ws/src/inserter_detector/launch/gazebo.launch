@@ -8,6 +8,8 @@
   <arg name="debug" default="false"/>
 
   <env name="GAZEBO_MODEL_PATH" value="$(find inserter_detector)/simulation" />
+  <env name="ROSCONSOLE_CONFIG_FILE"
+       value="$(find inserter_detector)/launch/rosconsole.conf"/>
 
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -20,6 +22,13 @@
   </include>
 
   <node name="realsense_tf" pkg="tf" type="static_transform_publisher" args="0 0 3 0 3.14 0 world realsense 100" />
+
+  <node name="inserter_detector" pkg="inserter_detector" type="node" output="screen">
+    <remap from="input" to="/realsense/depth_registered/points"/>
+    <remap from="output" to="/inserter/filtered"/>
+    <remap from="perf" to="/inserter/perf"/>
+  </node>
+  <!-- <node name="perf" pkg="rqt_plot" type="rqt_plot" args="/inserter/perf"/> -->
 
   <!--
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
