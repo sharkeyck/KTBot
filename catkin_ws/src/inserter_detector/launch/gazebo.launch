@@ -7,11 +7,10 @@
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
 
+  <!-- Start gazebo with model path & console config -->
   <env name="GAZEBO_MODEL_PATH" value="$(find inserter_detector)/simulation" />
   <env name="ROSCONSOLE_CONFIG_FILE"
        value="$(find inserter_detector)/launch/rosconsole.conf"/>
-
-  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find inserter_detector)/simulation/sim.world"/>
     <arg name="debug" value="$(arg debug)" />
@@ -29,34 +28,26 @@
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
     args="-urdf -model inserter -param robot_description"/>
 
+  <!-- Publish static TF for realsense camera position/orientation -->
   <node name="realsense_tf" pkg="tf" type="static_transform_publisher" args="0 0 3 0 3.14 0 world realsense 100" />
 
+  <!--
   <node name="inserter_detector" pkg="inserter_detector" type="node" output="screen">
     <remap from="input" to="/realsense/depth_registered/points"/>
     <remap from="output" to="/inserter/filtered"/>
     <remap from="perf" to="/inserter/perf"/>
   </node>
+  -->
+
+  <!-- For debugging, show performance of the point cloud code -->
   <!-- <node name="perf" pkg="rqt_plot" type="rqt_plot" args="/inserter/perf"/> -->
 
-  <!--
-  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-    args="-urdf -model realsense_d435 -param robot_descriptionZ"/>
-  <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher" output="screen">
-    <param name="publish_frequency" type="double" value="1.0" />
-  </node>
-  -->
-
-  <!-- Show in Rviz  -->
+  <!-- Show the point clouds in Rviz  -->
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find inserter_detector)/launch/realsense.rviz"/>
 
-  <!-- ros_control rrbot launch file -->
-  <!--include file="$(find rrbot_control)/launch/rrbot_control.launch" /-->
+  <group ns="inserter">
+    <rosparam command="load" file="$(find inserter_detector)/config/joints.yaml"/>
+    <node name="inserter_controller_spawner" pkg="controller_manager" type="spawner" args="joint_state_controller arm_controller"/>
+  </group>
 
-  <!--
-  <rosparam command="load" file="$(find ktbot_description)/config/joints.yaml"/>
-  <node name="ktbot_controller_spawner" pkg="controller_manager" type="spawner" args="joint_state_controller wheel_diff_drive_controller kt_wheel_control"/>
-  <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
-    <param name="default_topic" value="/wheel_diff_drive_controller/cmd_vel"/>
-  </node>
-  -->
 </launch>
