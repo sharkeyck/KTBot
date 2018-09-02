@@ -1,0 +1,28 @@
+<!-- Testing pose detection from a recorded bag of point cloud data. -->
+<launch>
+  <param name="use_sim_time" value="true" />
+  <!-- these are the arguments you can pass this launch file, for example paused:=true -->
+  <arg name="path" default="/home/semartin/Documents/KTBot/catkin_ws/src/inserter_detector/data/" />
+  <arg name="file" default="inserter_sweep_single.bag" />
+  <arg name="start_sec" default="1" />
+  <node pkg="rosbag" type="play" name="player" output="screen" args="--clock --start=$(arg start_sec) $(arg path)$(arg file)"/>
+
+  <!-- Load the URDF into the ROS Parameter Server -->
+  <!--<param name="robot_description"
+    command="$(find xacro)/xacro -inorder '$(find inserter_detector)/simulation/inserter/inserter.xacro'" />-->
+
+  <!-- Publish static TF for realsense camera position/orientation -->
+  <node name="realsense_tf" pkg="tf" type="static_transform_publisher" args="0 0 3 0 3.14 0 world realsense 100" />
+
+  <node name="inserter_detector" pkg="inserter_detector" type="node" output="screen">
+    <remap from="input" to="/realsense/depth_registered/points"/>
+    <remap from="output" to="/inserter/filtered"/>
+    <remap from="perf" to="/inserter/perf"/>
+  </node>
+
+  <!-- For debugging, show performance of the point cloud code -->
+  <node name="perf" pkg="rqt_plot" type="rqt_plot" args="/inserter/perf"/>
+
+  <!-- Show the point clouds in Rviz  -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find inserter_detector)/launch/realsense.rviz"/>
+</launch>

@@ -6,6 +6,7 @@
 #include <pcl/conversions.h>
 #include <pcl/point_types.h>
 #include <pcl/common/centroid.h>
+#include <pcl/filters/filter.h>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/extract_indices.h>
 #include <pcl/segmentation/sac_segmentation.h>
@@ -73,6 +74,10 @@ void cloud_cb (boost::shared_ptr<sensor_msgs::PointCloud2> cloud_msg) {
   extract.setIndices(inliers);
   extract.setNegative (true);
   extract.filterDirectly(cloud_filtered);
+
+  // Remove NaN values (can be done in place)
+  std::vector<int> indices;
+  pcl::removeNaNFromPointCloud(*cloud_filtered, *cloud_filtered, indices);
 
   // Apply reverse transform to get to world zero coordinates
 
