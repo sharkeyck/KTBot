@@ -87,45 +87,54 @@ void cloud_cb (boost::shared_ptr<sensor_msgs::PointCloud2> cloud_msg) {
   tree->setInputCloud(cloud_filtered);
 
   // Run euclidean cluster extraction to pull out each identifiable non-floor object
+  // http://docs.pointclouds.org/1.8.1/namespacepcl_1_1gpu.html#a5fe0ef2894a071171ecd36f73305259c
+
   std::vector<PointIndices> cluster_indices;
   pcl::EuclideanClusterExtraction<PointXYZ> ec;
-  ec.setClusterTolerance(0.02);
-  ec.setMinClusterSize(100);
-  ec.setMaxClusterSize(25000);
+  ec.setClusterTolerance(0.05); // 5 cm
+  ec.setMinClusterSize(10); // At least 10 points
+  ec.setMaxClusterSize(200); // At most 200 points
   ec.setSearchMethod(tree);
   ec.setInputCloud(cloud_filtered);
   ec.extract(cluster_indices);
 
-  // int j = 0;
-  // for (const PointIndices& i : cluster_indices) {
-  //   // Accumulate points and find the centroid
-  //   PointCloud<PointXYZ>::Ptr cloud_cluster(new PointCloud<PointXYZ>);
-  //   for (int j : i.indices) {
-  //     PointXYZ p = cloud_filtered->points[j];
-  //     cloud_cluster->points.push_back(p);
-  //   }
-  //   cloud_cluster->width = cloud_cluster->points.size();
-  //   cloud_cluster->height = 1;
-  //   cloud_cluster->is_dense = true;
 
-  //   // Normalize XY and set flat onto Z=0
-  //   /*
-  //   pcl::CentroidPoint<PointXYZ> centroid;
-  //   centroid.add(p);
-  //   minZ = std::min(p.z, minZ);
-  //   PointXYZ xyOffs;
-  //   centroid.get(xyOffs);
-  //   xyOffs.z = minZ;
-  //   PointCloud<PointXYZ>::Ptr normalized_cluster(new PointCloud<PointXYZ>);
-  //   pcl::transformPointCloud(*cloud_cluster, *normalized_cluster, xyOffs, Eigen::Quaternion<float>::Identity());
-  //   */
-  //   j++;
-  // }
-  // ROS_DEBUG_STREAM_THROTTLE_NAMED(10, NODE, "Extracted " << j << " clusters");
+  // TODO: Parallelize the next work, one thread per cluster (use threadpool?)
+  // Accumulate points, find the centroid, and normalize all points so it's centered.
+  // TODO: Keep track of centroids for each instance so we can understand their position when making actions
+  int k = 0;
+  PCLPointCloud2::Ptr normalized_cluster_pc2(new PCLPointCloud2);
+  for (const PointIndices& i : cluster_indices) {
+    PointCloud<PointXYZ>::Ptr cloud_cluster(new PointCloud<PointXYZ>);
+    for (int j : i.indices) {
+      PointXYZ p = cloud_filtered->points[j];
+      cloud_cluster->points.push_back(p);
+    }
+    cloud_cluster->width = cloud_cluster->points.size();
+    cloud_cluster->height = 1;
+    cloud_cluster->is_dense = true;
+    // Normalize XYZ
+    Eigen::Vector4f centroid;
+    pcl::compute3DCentroid(*cloud_cluster, centroid);
+
+    PointCloud<PointXYZ>::Ptr normalized_cluster(new PointCloud<PointXYZ>);
+    pcl::demeanPointCloud(*cloud_cluster, centroid, *normalized_cluster);
+
+    pcl::toPCLPointCloud2(*normalized_cluster, *normalized_cluster_pc2);
+    normalized_cluster_pc2->header = cloud->header; // Copy header to match frame etc.
+    pcl_conversions::moveFromPCL(*normalized_cluster_pc2, *cloud_msg);
+
+    k++;
+  }
+  ROS_INFO_STREAM_THROTTLE_NAMED(1, NODE, "Extracted " << k << " clusters");
+
+  // Run pose estimation NN to get <base link pos, world Z angle, theta angle>
+
+  //
 
   // Convert back to ROS & publish
-  pcl::toPCLPointCloud2(*cloud_filtered, *cloud_filtered_pc2);
-  pcl_conversions::moveFromPCL(*cloud_filtered_pc2, *cloud_msg);
+  // pcl::toPCLPointCloud2(*cloud_filtered, *cloud_filtered_pc2);
+  // pcl_conversions::moveFromPCL(*cloud_filtered_pc2, *cloud_msg);
 
   auto finish = std::chrono::steady_clock::now();
   pub.publish(cloud_msg);

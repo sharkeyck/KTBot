@@ -1,5 +1,16 @@
 # KTBot
 
+## Hardware Notes
+
+### Battery Charging
+
+2S 13A 7.4V Li-ion Lithium LiPo 18650 Battery Charger BMS Protection PCB Board
+
+- Model: HX-2S-D20
+- Charge voltage: 8.4v-9v
+- Over discharge voltage range: 2.5-3.0v ±0.05v
+- Overcharge voltage range: 4.25-4.35v±0.05v
+
 ## Running the Robot
 
 `roslaunch ktbot stdr_server_ktbot.launch`
@@ -14,19 +25,19 @@ STDR simulator launcher
 
 ## Next steps
 
-
-- GMAPPING AND MOOOOOOORE!
-- Clearing the map easily
-- try out google mapping thing: cartographer?
-
+- Spend time exploring the bot
 
 - Mechanical fixes
+  - add USB hub
   - do auto port recognition
-  - More stable wheel base
-
+  - Install wireless charging stuff
+  - Add IMU/accelerometer for better localization
+  - Add depth camera for MOAR SENSINGS and battery charge localization. https://github.com/IntelRealSense/librealsense/blob/master/doc/RaspberryPi3.md
 - Software
-  -Re-setup auto ros start on bot
+  - Re-setup auto ros start on bot
   - Try out Google Cartographer (instead of slam_gmapping) https://google-cartographer-ros.readthedocs.io/en/latest/
+  - Clearing the map easily
+  - Experiment with http://wiki.ros.org/smach for better path planning
 - Driver fixes
   - PWM control of wheel speed in servo
 - Gazebo
@@ -37,7 +48,6 @@ STDR simulator launcher
   - Build charge station (switch-based wireless charger)
   - Setup low battery sensing (via servos?)
   - Return-to-base behavior when low on battery or objective complete
-  - Think up fun objectives!
 
 For V2
 - Fix bot size & cable routing/management
@@ -116,6 +126,23 @@ echo -n "0000:02:00.0" | sudo tee /sys/bus/pci/drivers/xhci_hcd/bind
 
 Installation for ros: follow instructions at https://github.com/intel-ros/realsense
 
+## Wireless Charging
+
+- Power connector to xu4q 5V, PWRON, GND, and UARTs: https://wiki.odroid.com/odroid-xu4/hardware/expansion_connectors
+- 1x Wemos chip on board, powered from expansion connector on xu4q
+- 2x (2S) Battery charge indicator boards: https://www.ebay.com/itm/Li-po-Battery-Indicator-Display-Board-Power-Storage-Monitor-For-Rc-BatteryPartsT/352150842337?hash=item51fdd36be1:m:mQ-TSkRYDCdGHHW-ml6iv7g
+- 2x Battery fuel gauges: https://www.ebay.com/itm/2pcs-INA219-DC-Current-Sensor-Voltage-Test-Module-Breakout-Board-I2C-for-Arduino/292349818573
+- Speaker shield for audio sounds: https://ameridroid.com/collections/odroid/products/stereo-boom-bonnet-amp-speakers
+
+## "Purposes"
+
+- Detect where shadow is most often
+- Detect dropped socks (dropped electronics) and return them to home base
+- Follow people around (reinvent it as a shelf)
+- Carry messages to and fro
+- Put a google home on it
+- Teach it to play fetch, then to fetch things
+- Telepresence
 
 ## Failed At:
 
@@ -127,3 +154,4 @@ Installation for ros: follow instructions at https://github.com/intel-ros/realse
   3. Install XMing Windows System Server (Google for download link for your OS)
   4. Create the container (Make sure to change the IP address and username folder to your computer's / user's): `docker run -it --rm --name rostest -e DISPLAY=YOURIP:0.0 -v C:\Users\USERNAME\Documents\KTBot\catkin_ws:/root/catkin_ws my-ros-app:latest`
   *  `docker run -it -p 7681:7681 -p 8080:8080 --name gzweb giodegas/gzweb /bin/bash`
+
