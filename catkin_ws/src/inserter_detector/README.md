@@ -44,10 +44,27 @@ Applications:
 
 ## Examples
 
+**Make just this package**
+
+```
+catkin_make --pkg inserter_detector
+```
+
 **Gazebo Simulation**
 
 ```
 roslaunch inserter_detector gazebo.launch
+rosrun rqt_joint_trajectory_controller rqt_joint_trajectory_controller
+```
+
+**Get joint states and point cloud data for training**
+
+```
+# Start up gazebo sim as usual, then run this command to capture data. Press Ctrl+C to stop capture
+rosbag record /realsense/depth_registered/points /inserter/joint_states --output_name=capture.bag
+
+# Convert the bag into training data
+rosrun inserter_detector gen_training_data src/inserter_detector/data/inserter_with_joint_states.bag src/inserter_detector/data/output.herp
 ```
 
 **RViz Visualization**
@@ -64,4 +81,14 @@ Testing pose detection from a recorded bag of point cloud data
 roslaunch inserter_detector test_pose_detection.launch
 ```
 
+## GDB Cheatsheet
 
+Use GDB to run a node
+
+```
+rosrun --prefix 'gdb -ex run --args' inserter_detector gen_training_data src/inserter_detector/data/inserter_with_joint_states.bag src/inserter_detector/data/inserter_with_joint_states_segmented.bag
+```
+
+Use `bt` to get a backtrace
+
+Use `Ctrl+D` to exit
