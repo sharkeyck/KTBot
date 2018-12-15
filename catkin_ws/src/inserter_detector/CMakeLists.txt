@@ -3,7 +3,7 @@ project(inserter_detector)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 ## You can specify -g to include gdb info.
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++11 -g)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
