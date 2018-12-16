@@ -195,6 +195,10 @@ install(DIRECTORY include/${PROJECT_NAME}/
   FILES_MATCHING PATTERN "*.h"
 )
 
+## Install any python executables
+catkin_install_python(PROGRAMS src/bag_to_tf_record
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
 #   # myfile1

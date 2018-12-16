@@ -33,7 +33,7 @@ boost::shared_ptr<sensor_msgs::PointCloud2> convert_cloud(boost::shared_ptr<sens
   PointCloud<PointXYZ>::Ptr cloud = downsample_and_convert(cloudpcl);
   std::vector<PointCloud<PointXYZ>::Ptr> results = extract_and_normalize_clusters(cloud);
 
-  // Convert first detection back to ROS & publish
+  // Convert first detection back to ROS format
   if (results.size() > 0) {
     PCLPointCloud2::Ptr result_pc2(new PCLPointCloud2);
     pcl::toPCLPointCloud2(*results[0], *result_pc2);

@@ -6,7 +6,10 @@
 
 ## Setup
 
-TODO
+1. Install tensorflow with GPU support: `sudo pip install tensorflow-gpu`
+   *  Also need to install the dependencies for CUDA: https://www.tensorflow.org/install/gpu
+      *  Tried cuda 10.0 initially, but the tf library was looking for v9. Follow the "Install CUDA with apt" section to get the right version.
+2. Install Keras: `sudo pip install keras`
 
 ## Planning
 
@@ -63,8 +66,11 @@ rosrun rqt_joint_trajectory_controller rqt_joint_trajectory_controller
 # Start up gazebo sim as usual, then run this command to capture data. Press Ctrl+C to stop capture
 rosbag record /realsense/depth_registered/points /inserter/joint_states --output_name=capture.bag
 
-# Convert the bag into training data
-rosrun inserter_detector gen_training_data src/inserter_detector/data/inserter_with_joint_states.bag src/inserter_detector/data/output.herp
+# Run segmentation (bag --> bag, C++)
+rosrun inserter_detector gen_training_data --input src/inserter_detector/data/inserter_with_joint_states.bag --output src/inserter_detector/data/output.herp
+
+# Convert to TFRecord (bag --> TFRecord, Python)
+rosrun inserter_detector bag_to_tf_record --input src/inserter_detector/data/inserter_with_joint_states_segmented2.bag --output src/inserter_detector/data/inserter_with_joint_states.tfrecord
 ```
 
 **RViz Visualization**
@@ -86,7 +92,7 @@ roslaunch inserter_detector test_pose_detection.launch
 Use GDB to run a node
 
 ```
-rosrun --prefix 'gdb -ex run --args' inserter_detector gen_training_data src/inserter_detector/data/inserter_with_joint_states.bag src/inserter_detector/data/inserter_with_joint_states_segmented.bag
+rosrun --prefix 'gdb -ex run --args' inserter_detector gen_training_data --input src/inserter_detector/data/inserter_with_joint_states.bag --output src/inserter_detector/data/inserter_with_joint_states_segmented.bag
 ```
 
 Use `bt` to get a backtrace
