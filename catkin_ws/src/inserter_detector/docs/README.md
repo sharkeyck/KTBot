@@ -10,6 +10,7 @@
    *  Also need to install the dependencies for CUDA: https://www.tensorflow.org/install/gpu
       *  Tried cuda 10.0 initially, but the tf library was looking for v9. Follow the "Install CUDA with apt" section to get the right version.
 2. Install Keras: `sudo pip install keras`
+3. Ensure correct driver version (410.48.0) is installed (was 384.130.0)
 
 ## Planning
 

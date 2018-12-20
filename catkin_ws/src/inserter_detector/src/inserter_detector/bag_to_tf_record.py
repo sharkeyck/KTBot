@@ -6,8 +6,12 @@ import tensorflow as tf
 import numpy as np
 import sensor_msgs.point_cloud2 as pc2
 from inserter_detector.train_pose_detection import loadDataset
+from PIL import Image
 
 NUM_POINTS = 50
+PX_PER_M = 250
+PX_PER_Z = 1000
+IMG_SIZE = 64
 
 def convert(infile, outfile, joint_state_topic, pc_topic):
   topics = [pc_topic, joint_state_topic]
@@ -21,7 +25,29 @@ def convert(infile, outfile, joint_state_topic, pc_topic):
 
   def _joint_feature(jointstate):
     # jointstate is sensor_msgs/JointState
-    return tf.train.Feature(float_list=tf.train.FloatList(value=jointstate.position))
+    value = np.clip([
+      jointstate.position[0] / 6.28, #0 -> 6.28
+      jointstate.position[1] - 0.1, #0.1 -> 1.1
+      # (jointstate.position[2] - 0.01) / 0.05, # 0.01 -> 0.05
+    ], 0, 1)
+    print value
+    return tf.train.Feature(float_list=tf.train.FloatList(value=value))
+
+  def _flatimg_feature(cloud):
+    def _norm(dim):
+      return int(dim * PX_PER_M + IMG_SIZE/2)
+    # cloud is sensor_msgs/PointCloud2
+    gen = pc2.read_points(cloud, skip_nans=True, field_names=('x', 'y', 'z'))
+    data = np.full((IMG_SIZE,IMG_SIZE), 128, dtype=np.uint8)
+    coords = map(lambda p: [_norm(p[0]), _norm(p[1]), np.clip(p[2] * PX_PER_Z + 128, 0, 255)], gen)
+    for c in coords:
+      if c[0] >= IMG_SIZE or c[1] >= IMG_SIZE:
+        continue
+      # Z value becomes intensity
+      data[c[0]][c[1]] = c[2]
+
+    # print data.mean()
+    return tf.train.Feature(bytes_list=tf.train.BytesList(value=[data.flatten().tobytes()]))
 
   def _cloud_feature(cloud):
     # cloud is sensor_msgs/PointCloud2
@@ -53,8 +79,9 @@ def convert(infile, outfile, joint_state_topic, pc_topic):
         raise Exception('Unknown message on topic ', topic)
 
       example = tf.train.Example(features=tf.train.Features(feature={
-        'label': _joint_feature(latest_joint_state),
+        'joints': _joint_feature(latest_joint_state),
         'cloud_flat': _cloud_feature(msg),
+        'img_flat': _flatimg_feature(msg),
       }))
 
       count += 1
@@ -77,7 +104,10 @@ def verify(filepath):
   # Get example value
   next_element = iterator.get_next()
   with tf.Session() as sess:
-    print 'Example:', sess.run(next_element)
+    v = sess.run(next_element)
+    print 'Example:', v
+    img = Image.fromarray(v[1].reshape((IMG_SIZE, IMG_SIZE)).astype(np.uint8), 'L')
+    img.show()
 
 def main():
   parser = argparse.ArgumentParser(description='Converts .bag file to TFRecord.')
