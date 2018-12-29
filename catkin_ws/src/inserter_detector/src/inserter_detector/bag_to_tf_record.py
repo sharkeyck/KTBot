@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+import math
 import rosbag
 import argparse
 import tensorflow as tf
@@ -25,12 +25,16 @@ def convert(infile, outfile, joint_state_topic, pc_topic):
 
   def _joint_feature(jointstate):
     # jointstate is sensor_msgs/JointState
-    value = np.clip([
-      jointstate.position[0] / 6.28, #0 -> 6.28
-      jointstate.position[1] - 0.1, #0.1 -> 1.1
-      # (jointstate.position[2] - 0.01) / 0.05, # 0.01 -> 0.05
-    ], 0, 1)
-    print value
+
+    rot = jointstate.position[0] #0 - 6.28
+    ext = jointstate.position[1] - 0.1, #0 - 1
+    # grip = (jointstate.position[2] - 0.01) / 0.05, # 0.01 -> 0.05
+
+    value = [
+      math.sin(rot),
+      math.cos(rot),
+      ext[0],
+    ]
     return tf.train.Feature(float_list=tf.train.FloatList(value=value))
 
   def _flatimg_feature(cloud):

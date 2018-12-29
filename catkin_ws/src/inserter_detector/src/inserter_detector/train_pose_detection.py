@@ -15,7 +15,7 @@ sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 def _parse_function(num_points, img_size):
   def result(serialized_example):
     parsed = tf.parse_single_example(serialized_example, features = {
-      'joints': tf.FixedLenFeature((2), tf.float32),
+      'joints': tf.FixedLenFeature((3), tf.float32),
       'cloud_flat': tf.FixedLenFeature((3*num_points), tf.float32),
       'img_flat': tf.FixedLenFeature([], tf.string),
     })
@@ -33,24 +33,24 @@ def loadDataset(filenames, num_points=50, img_size=64):
 
 def model_layers(x_train_input):
   # x = keras.layers.Flatten(input_shape=(-1, 50, 3))(x_train_input)
-  x = keras.layers.Conv2D(16, kernel_size=(8, 8),
+  x = keras.layers.Conv2D(32, kernel_size=(4, 4),
                  activation='relu',
                  padding='same',
                  input_shape=(64, 64, 1))(x_train_input)
-  x = keras.layers.AveragePooling2D(pool_size=(2, 2))(x)
-  x = keras.layers.Conv2D(32, kernel_size=(3, 3),
+  x = keras.layers.AveragePooling2D(pool_size=(4, 4))(x)
+  x = keras.layers.Conv2D(64, kernel_size=(4, 4),
                  activation='relu',
                  padding='same')(x)
-  x = keras.layers.AveragePooling2D(pool_size=(2, 2))(x)
-  x = keras.layers.Conv2D(64, kernel_size=(3, 3),
+  x = keras.layers.AveragePooling2D(pool_size=(4, 4))(x)
+  x = keras.layers.Conv2D(128, kernel_size=(4, 4),
                  activation='relu',
                  padding='same')(x)
   x = keras.layers.Flatten()(x)
-  x = keras.layers.Dense(128, activation='relu')(x)
+  x = keras.layers.Dense(400, activation='relu')(x)
   x = keras.layers.Dropout(0.25)(x)
-  x = keras.layers.Dense(128, activation='relu')(x)
+  x = keras.layers.Dense(128, activation='linear')(x)
   x = keras.layers.Dropout(0.25)(x)
-  x = keras.layers.Dense(2, activation='linear')(x)
+  x = keras.layers.Dense(3, activation='linear')(x)
   return x
 
 def construct_model(dataset, batch_size):
@@ -74,25 +74,9 @@ def do_train(infile):
   sess = K.get_session()
 
   num_examples = 1700
-  batch_size = 100
-  epochs = 10
+  batch_size = 50
+  epochs = 100
   test_holdout = 200
-
-  # The capacity variable controls the maximum queue size
-  # allowed when prefetching data for training.
-  capacity = 10000
-
-
-  # If `enqueue_many` is `False`, `tensors` is assumed to represent a
-  # single example.  An input tensor with shape `[x, y, z]` will be output
-  # as a tensor with shape `[batch_size, x, y, z]`.
-  #
-  # If `enqueue_many` is `True`, `tensors` is assumed to represent a
-  # batch of examples, where the first dimension is indexed by example,
-  # and all members of `tensors` should have the same size in the
-  # first dimension.  If an input tensor has shape `[*, x, y, z]`, the
-  # output will have shape `[batch_size, x, y, z]`.
-  enqueue_many = True
 
   all_dataset = loadDataset([infile])
   all_dataset = all_dataset.shuffle(buffer_size=10000)
