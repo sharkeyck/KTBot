@@ -75,7 +75,7 @@ def cloud_to_flattened_list(cloud):
   return flat
 
 def serial_image_to_2d(serial_img):
-  return reshape((IMG_SIZE, IMG_SIZE)).astype(np.uint8)
+  return serial_img.reshape((IMG_SIZE, IMG_SIZE)).astype(np.uint8)
 
 def _joint_feature(jointstate):
   # jointstate is sensor_msgs/JointState

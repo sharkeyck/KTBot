@@ -27,5 +27,9 @@ GPU utilization check
 
 ## Ideas
 
+- Looks like the joint state information isn't actually the current joint state - it's the commanded joint state :(
+  - This means our training data is bad!
 - Try scaling Z axis image intensity (0-255 for each input)
+- Or use int8 instead of uint8 for intensity values
 - Try showing a grid of images - ones that perform well, vs ones that don't, as an output of test_pose_detection
+- Use matplotlib (https://realpython.com/python-matplotlib-guide/) to show a histogram of "good" detections vs "bad" detections in test.
