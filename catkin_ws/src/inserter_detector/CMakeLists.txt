@@ -203,6 +203,7 @@ catkin_install_python(PROGRAMS src/bag_to_tf_record
 install(FILES
   bag_to_tf_record
   train_pose_detection
+  test_pose_detection
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
