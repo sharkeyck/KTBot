@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="inserter" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="$(arg robot_name)" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Constants for robot dimensions -->
   <xacro:property name="PI" value="3.1415926535897931"/>
@@ -237,14 +237,14 @@
 
   <xacro:mimic_joint_plugin_gazebo name_prefix="joint3"
     parent_joint="joint2" mimic_joint="joint3"
-    has_pid="true" multiplier="-2.0" offset="${PI}" max_effort="20.0"
-    robot_namespace="/inserter"/>
+    has_pid="false" multiplier="-2.0" offset="${PI}" max_effort="20.0"
+    robot_namespace="/$(arg robot_name)"/>
   <xacro:mimic_joint_plugin_gazebo name_prefix="joint4"
     parent_joint="joint2" mimic_joint="joint4"
-    has_pid="true" multiplier="1.0" max_effort="20.0"
-    robot_namespace="/inserter"/>
+    has_pid="false" multiplier="1.0" max_effort="20.0"
+    robot_namespace="/$(arg robot_name)"/>
   <xacro:mimic_joint_plugin_gazebo name_prefix="joint6"
     parent_joint="joint5" mimic_joint="joint6"
-    has_pid="true" multiplier="1.0" max_effort="100.0"
-    robot_namespace="/inserter"/>
+    has_pid="false" multiplier="1.0" max_effort="100.0"
+    robot_namespace="/$(arg robot_name)"/>
 </robot>

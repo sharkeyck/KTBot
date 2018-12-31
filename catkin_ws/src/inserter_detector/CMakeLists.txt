@@ -205,6 +205,7 @@ install(FILES
   train_pose_detection
   test_pose_detection
   inference_node
+  simulate
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
