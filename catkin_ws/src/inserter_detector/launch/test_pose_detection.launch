@@ -14,15 +14,24 @@
   <!-- Publish static TF for realsense camera position/orientation -->
   <node name="realsense_tf" pkg="tf" type="static_transform_publisher" args="0 0 3 0 3.14 0 world realsense 100" />
 
-  <node name="inserter_detector" pkg="inserter_detector" type="node" output="screen">
+  <!-- node to extract point clouds and re-publish the normalized version -->
+  <node name="inserter_extract" pkg="inserter_detector" type="node" output="screen">
     <remap from="input" to="/realsense/depth_registered/points"/>
     <remap from="output" to="/inserter/filtered"/>
     <remap from="perf" to="/inserter/perf"/>
   </node>
 
+  <!-- node to ingest normalized clouds and output expected joint states -->
+  <param name="model_json_path" type="str" value="/home/semartin/Documents/KTBot/catkin_ws/src/inserter_detector/src/models/2018_12_30_00/model.json"/>
+  <param name="weights_path" type="str" value="/home/semartin/Documents/KTBot/catkin_ws/src/inserter_detector/src/models/2018_12_30_00/weights.h5"/>
+  <node name="inserter_predict" pkg="inserter_detector" type="inference_node" output="screen" args="">
+    <remap from="input" to="/inserter/filtered"/>
+    <remap from="output" to="/inserter/joint_states_predicted"/>
+  </node>
+
   <!-- For debugging, show performance of the point cloud code -->
   <node name="perf" pkg="rqt_plot" type="rqt_plot" args="/inserter/perf"/>
-  <node name="joints" pkg="rqt_plot" type="rqt_plot" args="/inserter/joint_states/position[0]  /inserter/joint_states/position[1]"/>
+  <node name="joints" pkg="rqt_plot" type="rqt_plot" args="/inserter/joint_states/position[0]  /inserter/joint_states/position[1] /inserter/joint_states_predicted/position[0]  /inserter/joint_states_predicted/position[1]"/>
 
   <!-- Show the point clouds in Rviz  -->
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find inserter_detector)/launch/realsense.rviz"/>

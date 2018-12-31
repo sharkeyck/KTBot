@@ -204,6 +204,7 @@ install(FILES
   bag_to_tf_record
   train_pose_detection
   test_pose_detection
+  inference_node
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

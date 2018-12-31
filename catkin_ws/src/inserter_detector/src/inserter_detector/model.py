@@ -45,6 +45,7 @@ def model_layers(input_layer):
 class Model:
   def __init__(self, model_json_path, weights_path):
     self.model = self.load(model_json_path, weights_path)
+    self.model._make_predict_function()
 
   def load(self, model_json_path, weights_path):
     json_file = open(model_json_path, 'r')

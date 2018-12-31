@@ -28,10 +28,10 @@ def prediction_to_joint_state(prediction):
   # Note: header has no time set
   result = JointState()
   result.header = Header()
-  result.name = ['joint0', 'joint1']
+  result.name = ['joint1', 'joint2'] #joint5 elided
   result.position = [math.atan2(prediction[0], prediction[1]), prediction[2] + 0.1]
-  result.velocity = []
-  result.effort = []
+  result.velocity = [0, 0]
+  result.effort = [0, 0]
   return result
 
 def flattened_list_to_cloud(flattened_list, frame_id="map"):
