@@ -9,7 +9,6 @@ import tensorflow as tf
 
 NUM_POINTS = 50
 PX_PER_M = 250
-PX_PER_Z = 1000
 IMG_SIZE = 64
 
 def joint_state_to_prediction(jointstate):
@@ -53,12 +52,14 @@ def cloud_to_image(cloud):
   # cloud is sensor_msgs/PointCloud2
   gen = pc2.read_points(cloud, skip_nans=True, field_names=('x', 'y', 'z'))
   data = np.full((IMG_SIZE,IMG_SIZE), 128, dtype=np.uint8)
-  coords = map(lambda p: [_norm(p[0]), _norm(p[1]), np.clip(p[2] * PX_PER_Z + 128, 0, 255)], gen)
+  coords = map(lambda p: [_norm(p[0]), _norm(p[1]), p[2]], gen)
+  zMax = np.max(coords, axis=0)[2]
+  zMin = np.min(coords, axis=0)[2]
   for c in coords:
     if c[0] >= IMG_SIZE or c[1] >= IMG_SIZE:
       continue
-    # Z value becomes intensity
-    data[c[0]][c[1]] = c[2]
+    # Z value becomes intensity, normalized 0-255
+    data[c[0]][c[1]] = int(round((c[2]-zMin) / (zMax - zMin) * 255))
   return data.reshape((IMG_SIZE, IMG_SIZE, 1))
 
 def cloud_to_flattened_list(cloud):

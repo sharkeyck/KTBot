@@ -46,9 +46,9 @@ def main():
   data = {'test': features.take(TEST_HOLDOUT), 'train': features.skip(TEST_HOLDOUT)}
 
   print 'Constructing train and test models'
-  train_model = _construct_model(data['train'], BATCH_SIZE)
+  train_model = _construct_model(data['train'])
   train_model.summary()
-  test_model = _construct_model(data['test'], BATCH_SIZE) # used for validation during training
+  test_model = _construct_model(data['test']) # used for validation during training
 
   print 'Fitting model (optimal: <0.0001 MSE)'
   coord = tf.train.Coordinator()

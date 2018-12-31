@@ -4,8 +4,7 @@ import convert
 import argparse
 import numpy as np
 import math
-from inserter_detector import dataset
-from PIL import Image, ImageDraw
+from inserter_detector import dataset, plot
 
 def model_layers(input_layer):
   KERNEL_SIZE = (2, 2)
@@ -65,7 +64,7 @@ def main():
   parser.add_argument('--tfrecord_path', type=str, help='input .tfrecord file')
   parser.add_argument('--model_json_path', type=str, help='path to saved model json file')
   parser.add_argument('--weights_path', type=str, help='path to saved model weights')
-  parser.add_argument('--num_examples', type=int, help='number of examples to evaluate', default=5)
+  parser.add_argument('--num_examples', type=int, help='number of examples to evaluate', default=64)
   args = parser.parse_args()
 
   print("Loading model from", args.model_json_path, ", weights from", args.weights_path)
@@ -97,31 +96,12 @@ def main():
 
     results.append(r)
 
-  def _pasteSerialImage(canvas, serial_img, offset):
-    img = Image.fromarray(convert.serial_image_to_2d(serial_img), 'L')
-    canvas.paste(img, offset)
-
-  def _drawInference(canvas, theta, extension, offset, color):
-    center = (offset[0] + convert.IMG_SIZE//2, offset[1] + convert.IMG_SIZE//2)
-    wV = (-math.cos(theta) * extension, -math.sin(theta * extension)) # -sin and -cos because origin is top left
-    wV = (wV[0] * convert.IMG_SIZE, wV[1] * convert.IMG_SIZE) # Scale up as joint state is 0.1-1.1 normally
-    draw = ImageDraw.Draw(canvas)
-    draw.line((
-      center[0] - wV[0]//2,
-      center[1] - wV[1]//2,
-      center[0] + wV[0]//2,
-      center[1] + wV[1]//2,
-    ), fill=color)
-
-  cell_length = 8
-  canvas = Image.new('RGB', (convert.IMG_SIZE * cell_length, convert.IMG_SIZE * cell_length), (128, 128, 128))
+  canvas = plot.newCanvas()
   for r in results:
     print("Example {i}\t (want, got, delta): angle ({wT:.2f}, {gT:.2f}, {dT:.2f}) extension ({wE:.2f}, {gE:.2f}, {dE:.2f})".format(**r))
-
-    offset = ((r['i'] % cell_length) * convert.IMG_SIZE, int(r['i'] / cell_length) * convert.IMG_SIZE)
-    _pasteSerialImage(canvas, examples[r['i']][1], offset)
-    _drawInference(canvas, r['wT'], r['wE'], offset, (255, 0, 0))
-    _drawInference(canvas, r['gT'], r['gE'], offset, (0, 255, 0))
+    plot.pasteSerialImage(canvas, r['i'], examples[r['i']][1])
+    plot.drawInference(canvas, r['i'], r['wT'], r['wE'], (255, 0, 0))
+    plot.drawInference(canvas, r['i'], r['gT'], r['gE'], (0, 255, 0))
 
   canvas = canvas.resize((1024,1024))
   canvas.show()
