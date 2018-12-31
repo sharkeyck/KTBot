@@ -13,6 +13,7 @@ def model_layers(input_layer):
                  padding='same',
                  input_shape=(convert.IMG_SIZE, convert.IMG_SIZE, 1))(input_layer)
   x = keras.layers.AveragePooling2D(pool_size=KERNEL_SIZE)(x)
+  x = keras.layers.Dropout(0.1)(x)
   x = keras.layers.Conv2D(32, kernel_size=KERNEL_SIZE,
                  activation='relu',
                  padding='same')(x)
@@ -33,10 +34,9 @@ def model_layers(input_layer):
                  activation='relu',
                  padding='same')(x)
   x = keras.layers.Flatten()(x)
-  x = keras.layers.Dense(400, activation='relu')(x)
-  x = keras.layers.Dropout(0.25)(x)
-  x = keras.layers.Dense(128, activation='relu')(x)
-  x = keras.layers.Dropout(0.25)(x)
+  x = keras.layers.Dropout(0.15)(x)
+  x = keras.layers.Dense(1024, activation='relu')(x)
+  x = keras.layers.Dropout(0.15)(x)
   x = keras.layers.Dense(3, activation='linear')(x)
 
   # Best MSE loss in test: 0.0008516441390383989
@@ -54,8 +54,8 @@ class Model:
     model.load_weights(weights_path)
     return model
 
-  def predict_joint_states(self, normalized_clouds):
-    images = np.array([convert.cloud_to_image(convert.flattened_list_to_cloud(c)) for c in normalized_clouds])
+  def predict_joint_states(self, images):
+    # images = np.array([convert.cloud_to_image(convert.flattened_list_to_cloud(c)) for c in normalized_clouds])
     prediction = self.model.predict(images)
     return [convert.prediction_to_joint_state(p) for p in prediction]
 
@@ -74,10 +74,12 @@ def main():
   print("Loading", args.num_examples, "examples from", args.tfrecord_path)
   examples = dataset.get_feature_samples([args.tfrecord_path], args.num_examples)
   clouds = [v[0] for v in examples]
+  images = np.array([convert.serial_image_to_2d(v[1]).reshape(convert.IMG_SIZE, convert.IMG_SIZE, 1) for v in examples])
   want = [convert.prediction_to_joint_state(v[2]) for v in examples]
 
   print("Doing prediction")
-  got = detector.predict_joint_states(clouds)
+  # got = detector.predict_joint_states(clouds)
+  got = detector.predict_joint_states(images)
 
   print("Results:")
   results = []
@@ -102,6 +104,8 @@ def main():
     plot.pasteSerialImage(canvas, r['i'], examples[r['i']][1])
     plot.drawInference(canvas, r['i'], r['wT'], r['wE'], (255, 0, 0))
     plot.drawInference(canvas, r['i'], r['gT'], r['gE'], (0, 255, 0))
+
+  print("Avg error {aeT:.2f}deg, {aeE:.2f} extension".format(aeT=np.mean([r['dT'] for r in results]) * 180 / np.pi, aeE=np.mean([r['dE'] for r in results])))
 
   canvas = canvas.resize((1024,1024))
   canvas.show()

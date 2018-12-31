@@ -8,14 +8,14 @@ import math
 import tensorflow as tf
 
 NUM_POINTS = 50
-PX_PER_M = 250
 IMG_SIZE = 64
+PX_PER_M = 4 * IMG_SIZE
 
 def joint_state_to_prediction(jointstate):
   # jointstate is sensor_msgs/JointState
 
   rot = jointstate.position[0] #0 - 6.28
-  ext = jointstate.position[1] - 0.1, #0 - 1
+  ext = jointstate.position[1] - 0.1, #0.1 - 1.1
   # grip = (jointstate.position[2] - 0.01) / 0.05, # 0.01 -> 0.05
 
   return [

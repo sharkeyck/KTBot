@@ -8,7 +8,7 @@ import keras
 import numpy as np
 from inserter_detector import dataset
 from tensorflow.python.client import device_lib
-from pose_detection_model import model_layers
+from inserter_detector.model import model_layers
 
 sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
@@ -60,10 +60,11 @@ def main():
       callbacks=[EvaluateInputTensor(test_model, steps=10), tbCallBack])
 
   print 'Saving model and weights to', args.output
-  with open(args.output + '.json', 'w') as f:
-    f.write(train_model.to_json())
-  train_model.save_weights(args.output + '.h5')
   tf.train.Saver(tf.trainable_variables()).save(sess, args.output + '/saved')
+  with open(args.output + '/model.json', 'w') as f:
+    f.write(train_model.to_json())
+  train_model.save_weights(args.output + '/weights.h5')
+
 
   print 'Cleaning up session'
   coord.request_stop()
