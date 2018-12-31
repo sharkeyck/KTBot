@@ -122,47 +122,8 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link1:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link3:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link4:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link5:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link6:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        world:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
       Name: RobotModel
-      Robot Description: robot_description
+      Robot Description: /inserter/robot_description
       TF Prefix: ""
       Update Interval: 0
       Value: true
@@ -192,7 +153,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 0.817351222
+      Distance: 0.708911538
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
@@ -228,5 +189,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 1260
-  Y: 394
+  X: 1325
+  Y: 477

@@ -21,14 +21,6 @@
     <arg name="headless" value="$(arg headless)"/>
   </include>
 
-  <!-- Load the URDF into the ROS Parameter Server -->
-  <param name="/inserter/robot_description"
-      command="$(find xacro)/xacro --inorder '$(find inserter_detector)/simulation/inserter/inserter.xacro' robot_name:=inserter" />
-
-  <!-- Spawn robots -->
-  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-    args="-urdf -model inserter -param /inserter/robot_description"/>
-
   <!-- Publish static TF for realsense camera position/orientation -->
   <node name="realsense_tf" pkg="tf" type="static_transform_publisher" args="0 0 3 0 3.14 0 world realsense 100" />
 
@@ -42,13 +34,4 @@
     <!-- For debugging, show performance of the point cloud code -->
     <node name="perf" pkg="rqt_plot" type="rqt_plot" args="/inserter/perf"/>
   </group>
-
-  <!-- Show the point clouds in Rviz  -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find inserter_detector)/launch/realsense.rviz"/>
-
-  <group ns="inserter">
-    <rosparam command="load" file="$(find inserter_detector)/config/joints.yaml"/>
-    <node name="inserter_controller_spawner" pkg="controller_manager" type="spawner" args="joint_state_controller arm_controller"/>
-  </group>
-
 </launch>
