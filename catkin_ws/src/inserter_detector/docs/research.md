@@ -33,3 +33,10 @@ GPU utilization check
 - (DONE) Try showing a grid of images - ones that perform well, vs ones that don't, as an output of test_pose_detection
 - Use matplotlib (https://realpython.com/python-matplotlib-guide/) to show a histogram of "good" detections vs "bad" detections in test.
 - Angle error (1.2-1.3deg) may be a factor of image resolution. What if we increased the image size?
+- For performance, could bundle the inserter segmentation and inference into a single nodelet (is it possible with different languages?)
+
+Bag example generation performance
+
+- Stop converting to PointCloud<PointXYZRGB>, instead use pcl::getMinMax with Z field (http://docs.pointclouds.org/1.7.0/group__common.html#ga287e6ce2d4be348c059baf31eaf2dd54)
+- Use rosbag_direct_write with custom CloudSegments serializer (https://github.com/osrf/rosbag_direct_write/blob/a6ea09be0b307866f090929de7b13332db09c3d9/test/direct_PointCloud2.h)
+- 2 shards took 630s, 1 shard took 318s...

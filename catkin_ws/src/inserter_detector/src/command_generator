@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from inserter_detector_py.inference_node import main
+from inserter_detector_py.command_generator import main
 
 if __name__== '__main__':
     try:

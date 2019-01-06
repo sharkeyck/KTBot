@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from inserter_detector.sim import main
+from inserter_detector_py.sim import main
 
 if __name__== '__main__':
     try:

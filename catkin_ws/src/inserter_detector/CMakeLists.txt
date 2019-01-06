@@ -13,10 +13,15 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_ros
   roscpp
   sensor_msgs
+  std_msgs
+  geometry_msgs
+  tf
+  message_generation
+  rosbag_direct_write
 )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS system thread)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -48,11 +53,11 @@ catkin_python_setup()
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+  FILES
+  CloudSegments.msg
+  CloudSegmentsStats.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -69,10 +74,12 @@ catkin_python_setup()
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   sensor_msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -106,6 +113,7 @@ catkin_python_setup()
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}_scene_segmentation
+  CATKIN_DEPENDS message_runtime
 #  CATKIN_DEPENDS pcl_conversions pcl_ros roscpp sensor_msgs
 #  DEPENDS system_lib
 )
@@ -119,6 +127,10 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
+  # /usr/include/ctpl
+  # /usr/include/glib-2.0
+  # /usr/lib/x86_64-linux-gnu/glib-2.0/include/
 )
 
 ## Declare a C++ library
@@ -206,6 +218,7 @@ install(FILES
   test_pose_detection
   inference_node
   simulate
+  command_generator
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

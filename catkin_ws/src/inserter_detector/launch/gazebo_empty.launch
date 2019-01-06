@@ -6,7 +6,6 @@
   <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
-  <arg name="detect" default="true"/>
 
   <!-- Start gazebo with model path & console config -->
   <env name="GAZEBO_MODEL_PATH" value="$(find inserter_detector)/simulation" />
@@ -23,15 +22,4 @@
 
   <!-- Publish static TF for realsense camera position/orientation -->
   <node name="realsense_tf" pkg="tf" type="static_transform_publisher" args="0 0 3 0 3.14 0 world realsense 100" />
-
-  <group if="$(arg detect)">
-    <node name="inserter_detector" pkg="inserter_detector" type="node" output="screen">
-      <remap from="input" to="/realsense/depth_registered/points"/>
-      <remap from="output" to="/inserter/filtered"/>
-      <remap from="perf" to="/inserter/perf"/>
-    </node>
-
-    <!-- For debugging, show performance of the point cloud code -->
-    <node name="perf" pkg="rqt_plot" type="rqt_plot" args="/inserter/perf"/>
-  </group>
 </launch>

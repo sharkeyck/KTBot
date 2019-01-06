@@ -11,6 +11,7 @@
       *  Tried cuda 10.0 initially, but the tf library was looking for v9. Follow the "Install CUDA with apt" section to get the right version.
 2. Install Keras: `sudo pip install keras`
 3. Ensure correct driver version (410.48.0) is installed (was 384.130.0)
+4. Install libctpl-dev (for multithreading)
 
 ## Planning
 
@@ -86,6 +87,41 @@ Testing pose detection from a recorded bag of point cloud data
 
 ```
 roslaunch inserter_detector test_pose_detection.launch
+```
+
+### Multiple Arms
+
+```
+# Simulate 16 robots in a grid
+rosrun inserter_detector simulate --num_bots=16
+
+# Issue random commands to all robots
+rosrun inserter_detector command_generator --num_bots 16
+
+# Record all robot joint states and the point cloud data to a bag
+rosbag record \
+  /gazebo/model_states \
+  /tf \
+  /realsense/depth_registered/points \
+  /inserter0/joint_states \
+  /inserter1/joint_states \
+  /inserter2/joint_states \
+  /inserter3/joint_states \
+  /inserter4/joint_states \
+  /inserter5/joint_states \
+  /inserter6/joint_states \
+  /inserter7/joint_states \
+  /inserter8/joint_states \
+  /inserter9/joint_states \
+  /inserter10/joint_states \
+  /inserter11/joint_states \
+  /inserter12/joint_states \
+  /inserter13/joint_states \
+  /inserter14/joint_states \
+  /inserter15/joint_states \
+
+# Run segmentation (bag --> bag, C++)
+rosrun inserter_detector gen_training_data --input src/inserter_detector/data/inserter_with_joint_states.bag --output src/inserter_detector/data/output.herp
 ```
 
 ## GDB Cheatsheet

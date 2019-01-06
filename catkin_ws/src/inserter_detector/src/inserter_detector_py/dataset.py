@@ -1,18 +1,17 @@
 import tensorflow as tf
-import convert
+from inserter_detector_py import convert
 
 def _parse_function(serialized_example):
   # Parse the record into tensors.
   parsed = tf.parse_single_example(serialized_example, features = {
     'joints': tf.FixedLenFeature((3), tf.float32),
-    'cloud_flat': tf.FixedLenFeature((3*convert.NUM_POINTS), tf.float32),
-    'img_flat': tf.FixedLenFeature([], tf.string),
+    'img_raw': tf.FixedLenFeature([], tf.string),
   })
 
-  cloud = tf.reshape(parsed['cloud_flat'], (convert.NUM_POINTS, 3))
-  img = tf.reshape(tf.cast(tf.io.decode_raw(parsed['img_flat'], tf.uint8), tf.float32),(convert.IMG_SIZE, convert.IMG_SIZE, 1))
+  img = convert.raw_img_data_to_shaped_tensor(parsed['img_raw'])
+  # img = parsed['img_raw']
 
-  return [cloud, img, parsed['joints']]
+  return [img, parsed['joints']]
 
 def load_features(filenames):
   # Load a dataset converted with bag_to_tf_record.

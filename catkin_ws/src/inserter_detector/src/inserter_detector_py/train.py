@@ -1,26 +1,27 @@
 import argparse
 from keras.models import Sequential
 from keras.layers import Dense
-from inserter_detector.evaluate_input_tensor import EvaluateInputTensor
+from inserter_detector_py.evaluate_input_tensor import EvaluateInputTensor
+from inserter_detector_py.model import model_layers
+from inserter_detector_py import dataset
 import tensorflow as tf
 from keras import backend as K
 import keras
 import numpy as np
-from inserter_detector import dataset
 from tensorflow.python.client import device_lib
-from inserter_detector.model import model_layers
+
 
 sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
-NUM_EXAMPLES = 1700
+NUM_EXAMPLES = 69903
 BATCH_SIZE = 100
-EPOCHS = 100
+EPOCHS = 20
 TEST_HOLDOUT = 200
 BUFFER_SIZE = 10000
 
 def _construct_model(data):
   train_batch = data.batch(BATCH_SIZE).repeat()
-  _, img, joints = train_batch.make_one_shot_iterator().get_next()
+  img, joints = train_batch.make_one_shot_iterator().get_next()
 
   model_input = keras.layers.Input(tensor=img)
   model_output = model_layers(model_input)

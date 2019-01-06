@@ -4,7 +4,7 @@ import convert
 import argparse
 import numpy as np
 import math
-from inserter_detector import dataset, plot
+from inserter_detector_py import dataset, plot
 
 def model_layers(input_layer):
   KERNEL_SIZE = (2, 2)
@@ -56,7 +56,6 @@ class Model:
     return model
 
   def predict_joint_states(self, images):
-    # images = np.array([convert.cloud_to_image(convert.flattened_list_to_cloud(c)) for c in normalized_clouds])
     prediction = self.model.predict(images)
     return [convert.prediction_to_joint_state(p) for p in prediction]
 
@@ -74,12 +73,10 @@ def main():
 
   print("Loading", args.num_examples, "examples from", args.tfrecord_path)
   examples = dataset.get_feature_samples([args.tfrecord_path], args.num_examples)
-  clouds = [v[0] for v in examples]
-  images = np.array([convert.serial_image_to_2d(v[1]).reshape(convert.IMG_SIZE, convert.IMG_SIZE, 1) for v in examples])
-  want = [convert.prediction_to_joint_state(v[2]) for v in examples]
+  images = np.array([v[0] for v in examples])
+  want = [convert.prediction_to_joint_state(v[1]) for v in examples]
 
   print("Doing prediction")
-  # got = detector.predict_joint_states(clouds)
   got = detector.predict_joint_states(images)
 
   print("Results:")
@@ -102,7 +99,7 @@ def main():
   canvas = plot.newCanvas()
   for r in results:
     print("Example {i}\t (want, got, delta): angle ({wT:.2f}, {gT:.2f}, {dT:.2f}) extension ({wE:.2f}, {gE:.2f}, {dE:.2f})".format(**r))
-    plot.pasteSerialImage(canvas, r['i'], examples[r['i']][1])
+    plot.pasteImage(canvas, r['i'], examples[r['i']][0].reshape(convert.IMG_SIZE, convert.IMG_SIZE).astype(np.uint8))
     plot.drawInference(canvas, r['i'], r['wT'], r['wE'], (255, 0, 0))
     plot.drawInference(canvas, r['i'], r['gT'], r['gE'], (0, 255, 0))
 

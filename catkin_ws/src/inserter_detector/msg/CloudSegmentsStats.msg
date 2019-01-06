@@ -1,0 +1,4 @@
+duration pcl_conversion
+duration frame_extraction
+duration work_assignment
+duration parallel_join
