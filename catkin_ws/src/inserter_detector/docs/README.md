@@ -12,6 +12,7 @@
 2. Install Keras: `sudo pip install keras`
 3. Ensure correct driver version (410.48.0) is installed (was 384.130.0)
 4. Install libctpl-dev (for multithreading)
+5. Install ros-kinetic-moveit
 
 ## Planning
 
@@ -23,18 +24,29 @@ Features:
 
 Milestones:
 
-- Hardware design & prototype (DONE)
-- Open-loop simulation in gazebo (DONE)
-- Rosbag training data extracter
-- Train DNN for position detection
-- Closed-loop simulation in gazebo
-- Simulation + MoveIt! library
-- Install GPU support for PCL (point cloud library) [here](http://pointclouds.org/documentation/tutorials/gpu_install.php) and accelerate point cloud detection stuffs
-- Working prototype
-- Move around safely (with limits)
-- IK-based motion ("go to point")
-- CV goal planning ("pick up this object and put it there")
+- (DONE) Hardware design & prototype
+- (DONE) Open-loop simulation in gazebo
+- (DONE) Rosbag training data extracter
+- (DONE) Train DNN for position detection
+- (DONE) Closed-loop simulation in gazebo
+- Simulation + MoveIt! library using point cloud positioning
+  - Including moving arm safely around objects
+  - IK-based motion ("go to point")
+- Grid of arms, move blocks between pedestals
+- Simulate conveyor in gazebo, have arms intercept blocks and
+  pass them around on the conveyors (http://gazebosim.org/ariac)
+- Physical prototype of conveyor belts
+- (DONE) Physical prototype of robotic arms, no depth camera estimation
+- Realsense based joint state estimation of single physical robot
+- Realsense based joint state estimation of multiple physical robots
+- Multiple physical robots passing a physical object between them
+- Multiple physical robots passing objects between conveyor belts
+- CV based goal planning ("pick up this object and put it there")
 - Visual servoing (match offset position with a marker)
+
+Planned, but didn't have to do:
+
+- Install GPU support for PCL (point cloud library) [here](http://pointclouds.org/documentation/tutorials/gpu_install.php) and accelerate point cloud detection stuffs
 
 Applications:
 
@@ -45,7 +57,7 @@ Applications:
 - Automatic screw sorter
 - Electromagnet pickup tool
 - Bonus: mount a high speed motor on the end... insta-CNC!
-
+- Control a bunch of robots at once with the same depth camera sensor
 
 ## Examples
 
