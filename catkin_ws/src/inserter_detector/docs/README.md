@@ -19,7 +19,8 @@
 Features:
 
 - Variant 1: SCARA arm (Z-axis plus shoulder, elbow, and gripper)
-- Variant 2: Multiple articulated arms
+- Variant 1.5: 3 DOF "inserter" style arm
+- Variant 2: Articulated arm
 - Adjacent camera for position estimation/localization of single/multiple arms
 
 Milestones:
@@ -29,18 +30,41 @@ Milestones:
 - (DONE) Rosbag training data extracter
 - (DONE) Train DNN for position detection
 - (DONE) Closed-loop simulation in gazebo
+- Clean up inserter_detector to wait for arms before starting to do segmentation
 - Simulation + MoveIt! library using point cloud positioning
-  - Including moving arm safely around objects
-  - IK-based motion ("go to point")
-- Grid of arms, move blocks between pedestals
-- Simulate conveyor in gazebo, have arms intercept blocks and
-  pass them around on the conveyors (http://gazebosim.org/ariac)
+  - (DONE) Read through MoveIt! library tutorials, refresh linear algebra knowledge
+  - Use MoveIt! setup wizard on the inserter model
+  - Fake/rviz simulation a la MoveIt! pick-and-place tutorial
+    http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/pick_place/pick_place_tutorial.html
+  - Gazebo simulation, cheating (reading gazebo model positions topic for objects)
+  - Gazebo simulation using point cloud and SAC segmentation for identifying objects
+- Motion planner service (static)
+  - Identifies pickable object
+  - Computes motion plan to grab and place 180deg away
+  - Grid of arms, move blocks between pedestals
+- Motion planner service (dynamic)
+  - Simulate conveyor in gazebo (http://gazebosim.org/ariac)
+  - Identify object heading to intercept point and have arm grasp/intercept
+  - have arms intercept blocks and pass them around on the conveyors
+
+**Factorio Simulation Achieved**
+
 - Physical prototype of conveyor belts
+  - (DONE) Functional conveyor slats that slide in 20-2020 channel
+  - (DONE) Functional 3D printed 20-2020 channel radius
+  - Motor mount that mates to 20-2020 channel
+  - Circular loop of 20-2020 controllable by motor
 - (DONE) Physical prototype of robotic arms, no depth camera estimation
 - Realsense based joint state estimation of single physical robot
 - Realsense based joint state estimation of multiple physical robots
 - Multiple physical robots passing a physical object between them
 - Multiple physical robots passing objects between conveyor belts
+
+**Factorio IRL Achieved**
+
+
+### Other Ideas
+
 - CV based goal planning ("pick up this object and put it there")
 - Visual servoing (match offset position with a marker)
 
@@ -59,7 +83,7 @@ Applications:
 - Bonus: mount a high speed motor on the end... insta-CNC!
 - Control a bunch of robots at once with the same depth camera sensor
 
-## Examples
+## Recipes
 
 **Make just this package**
 
@@ -136,7 +160,7 @@ rosbag record \
 rosrun inserter_detector gen_training_data --input src/inserter_detector/data/inserter_with_joint_states.bag --output src/inserter_detector/data/output.herp
 ```
 
-## GDB Cheatsheet
+### GDB Cheatsheet
 
 Use GDB to run a node
 
