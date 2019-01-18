@@ -1,0 +1,246 @@
+<?xml version="1.0"?>
+<robot name="$(arg robot_name)" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Constants for robot dimensions -->
+  <xacro:property name="PI" value="3.1415926535897931"/>
+  <xacro:property name="mass" value="1" /> <!-- arbitrary value for mass -->
+  <xacro:property name="base_width" value="0.077" /> <!-- Square dimensions (widthxwidth) of base -->
+  <xacro:property name="base_height" value="0.03" /> <!-- Base height -->
+  <xacro:property name="conn_to_axle" value="0.0335" /> <!-- Length from attach point to axle -->
+  <xacro:property name="servo_height" value="0.045" /> <!-- Height of servo -->
+  <xacro:property name="servo_to_axle" value="0.0385" /> <!-- Length from base of servo to axle -->
+  <xacro:property name="servotop_to_axle" value="${servo_height - servo_to_axle}" />
+  <xacro:property name="smallcon" value="0.0065" /> <!-- Extra spacing due to small connector -->
+  <xacro:property name="thick" value="0.025" />
+  <xacro:property name="l1" value="0.1" />
+
+  <xacro:macro name="box_inertial" params="x y z mass *origin">
+    <inertial>
+      <mass value="${mass}" />
+      <xacro:insert_block name="origin" />
+      <inertia ixx="${0.0833333 * mass * (y*y + z*z)}" ixy="0.0" ixz="0.0"
+        iyy="${0.0833333 * mass * (x*x + z*z)}" iyz="0.0"
+        izz="${0.0833333 * mass * (x*x + y*y)}" />
+    </inertial>
+  </xacro:macro>
+
+  <!-- Import all Gazebo-customization elements, including Gazebo colors -->
+  <xacro:include filename="$(find inserter_detector)/simulation/inserter/inserter.gazebo" />
+  <!-- Import Rviz colors -->
+  <xacro:include filename="$(find inserter_detector)/simulation/inserter/materials.xacro" />
+
+  <!-- Used for fixing robot to Gazebo 'base_link' -->
+  <link name="world"/>
+
+  <joint name="fixed" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+  </joint>
+
+  <!-- Base Link -->
+  <link name="base_link">
+    <collision>
+      <origin xyz="0 0 ${base_height/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${base_width} ${base_width} ${base_height}"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 ${base_height/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${base_width} ${base_width} ${base_height}"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <xacro:box_inertial mass="1.0" x="${base_width}" y="${base_width}" z="${base_height}">
+      <origin xyz="0 0 ${base_height/2}" />
+    </xacro:box_inertial>
+  </link>
+
+  <joint name="joint1" type="revolute">
+    <limit effort="1000.0" lower="${-PI}" upper="${PI}" velocity="0.5"/>
+    <origin rpy="0 0 0" xyz="0 0 ${base_height + 0.01}"/>
+    <parent link="base_link"/>
+    <child link="link1"/>
+    <axis xyz="0 0 1"/>
+    <dynamics damping="0.7"/>
+  </joint>
+
+  <link name="link1">
+    <xacro:box_inertial mass="1.0" x="0.1" y="0.1" z="0.1">
+      <origin xyz="0 0 0" />
+    </xacro:box_inertial>
+  </link>
+
+  <joint name="joint2" type="revolute">
+    <limit effort="1000.0" lower="0.05" upper="1.1" velocity="0.5"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="link1"/>
+    <child link="link2"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+
+  <link name="link2">
+    <visual>
+      <origin xyz="0 0 ${l1/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${thick} ${thick} ${l1}"/>
+      </geometry>
+      <material name="dgrey"/>
+    </visual>
+    <xacro:box_inertial mass="1.0" x="${thick}" y="${thick}" z="${l1}">
+      <origin xyz="0 0 ${l1/2}" />
+    </xacro:box_inertial>
+  </link>
+
+  <joint name="joint3" type="revolute">
+    <limit effort="1000.0" lower="0" upper="${PI}" velocity="0.5"/>
+    <origin rpy="0 0 0" xyz="0 0 ${l1}"/>
+    <parent link="link2"/>
+    <child link="link3"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="link3">
+    <visual>
+      <origin xyz="0 0 ${l1/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${thick} ${thick} ${l1}"/>
+      </geometry>
+      <material name="dgrey"/>
+    </visual>
+    <xacro:box_inertial mass="1.0" x="${thick}" y="${thick}" z="${l1}">
+      <origin xyz="0 0 ${l1/2}" />
+    </xacro:box_inertial>
+  </link>
+
+  <joint name="joint_arm_end" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 ${l1}"/>
+    <parent link="link3"/>
+    <child link="link_arm_end"/>
+  </joint>
+
+  <link name="link_arm_end"></link>
+
+  <joint name="joint4" type="revolute">
+    <limit effort="1000.0" lower="-${PI*0.6}" upper="${PI*0.6}" velocity="0.5"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="link_arm_end"/>
+    <child link="link4"/>
+    <mimic joint="joint2" multiplier="1" offset="0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="link4">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${thick/2} ${l1} ${thick/2}"/>
+      </geometry>
+      <material name="dgrey"/>
+    </visual>
+    <xacro:box_inertial mass="0.1" x="${thick/2}" y="${l1}" z="${thick/2}">
+      <origin xyz="0 0 0" />
+    </xacro:box_inertial>
+  </link>
+
+  <joint name="joint5" type="prismatic">
+    <limit effort="1000.0" lower="0.01" upper="0.05" velocity="0.5"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="link4"/>
+    <child link="link5"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="link5">
+    <visual>
+      <origin xyz="${-l1/4} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${l1/2} ${thick/2} ${thick/2}"/>
+      </geometry>
+      <material name="dgrey"/>
+    </visual>
+    <xacro:box_inertial mass="0.1" x="${l1/2}" y="${thick/2}" z="${thick/2}">
+      <origin xyz="${-l1/4} 0 0" />
+    </xacro:box_inertial>
+  </link>
+
+  <joint name="joint6" type="prismatic">
+    <limit effort="1000.0" lower="0.01" upper="0.05" velocity="0.5"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="link4"/>
+    <child link="link6"/>
+    <axis xyz="0 -1 0"/>
+    <mimic joint="joint5" multiplier="1" offset="0"/>
+  </joint>
+
+  <link name="link6">
+    <visual>
+      <origin xyz="${-l1/4} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${l1/2} ${thick/2} ${thick/2}"/>
+      </geometry>
+      <material name="dgrey"/>
+    </visual>
+    <xacro:box_inertial mass="0.1" x="${l1/2}" y="${thick/2}" z="${thick/2}">
+      <origin xyz="${-l1/4} 0 0" />
+    </xacro:box_inertial>
+  </link>
+
+  <transmission name="tran1">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="motor1">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="joint1">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+  <transmission name="tran2">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="motor2">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="joint2">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+  <transmission name="tran5">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="motor5">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="joint5">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+  <xacro:macro name="mimic_joint_plugin_gazebo" params="name_prefix parent_joint mimic_joint has_pid:=false multiplier:=1.0 offset:=0 sensitiveness:=0.0 max_effort:=1.0 robot_namespace:=''">
+    <gazebo>
+      <plugin name="${name_prefix}mimic_joint_plugin" filename="libroboticsgroup_gazebo_mimic_joint_plugin.so">
+        <joint>${parent_joint}</joint>
+        <mimicJoint>${mimic_joint}</mimicJoint>
+        <xacro:if value="${has_pid}">                     <!-- if set to true, PID parameters from "/gazebo_ros_control/pid_gains/${mimic_joint}" are loaded -->
+          <hasPID />
+        </xacro:if>
+        <multiplier>${multiplier}</multiplier>
+        <offset>${offset}</offset>
+        <sensitiveness>${sensitiveness}</sensitiveness>   <!-- if absolute difference between setpoint and process value is below this threshold, do nothing; 0.0 = disable [rad] -->
+        <maxEffort>${max_effort}</maxEffort>              <!-- only taken into account if has_pid:=true [Nm] -->
+        <xacro:unless value="${robot_namespace == ''}">
+          <robotNamespace>${robot_namespace}</robotNamespace>
+        </xacro:unless>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:mimic_joint_plugin_gazebo name_prefix="joint4"
+    parent_joint="joint2" mimic_joint="joint4"
+    has_pid="false" multiplier="1.0" max_effort="20.0"
+    robot_namespace="/$(arg robot_name)"/>
+  <xacro:mimic_joint_plugin_gazebo name_prefix="joint6"
+    parent_joint="joint5" mimic_joint="joint6"
+    has_pid="false" multiplier="1.0" max_effort="100.0"
+    robot_namespace="/$(arg robot_name)"/>
+</robot>
