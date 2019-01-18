@@ -18,6 +18,12 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   message_generation
   rosbag_direct_write
+
+  interactive_markers
+  moveit_core
+  moveit_visual_tools
+  moveit_ros_planning
+  moveit_ros_planning_interface
 )
 
 ## System dependencies are found with CMake's conventions
@@ -113,7 +119,12 @@ generate_messages(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}_scene_segmentation
-  CATKIN_DEPENDS message_runtime
+  CATKIN_DEPENDS
+    message_runtime
+    moveit_core
+    moveit_visual_tools
+    moveit_ros_planning_interface
+    interactive_markers
 #  CATKIN_DEPENDS pcl_conversions pcl_ros roscpp sensor_msgs
 #  DEPENDS system_lib
 )
@@ -153,6 +164,8 @@ add_executable(${PROJECT_NAME}_node
   src/inserter_detector_node.cpp)
 add_executable(${PROJECT_NAME}_gen_training_data
   src/generate_training_data.cpp)
+add_executable(${PROJECT_NAME}_pick_place_tutorial
+  src/pick_place_tutorial.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -162,6 +175,8 @@ set_target_properties(${PROJECT_NAME}_node PROPERTIES
   OUTPUT_NAME node PREFIX "")
 set_target_properties(${PROJECT_NAME}_gen_training_data PROPERTIES
   OUTPUT_NAME gen_training_data PREFIX "")
+set_target_properties(${PROJECT_NAME}_pick_place_tutorial PROPERTIES
+  OUTPUT_NAME pick_place_tutorial PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -179,6 +194,8 @@ target_link_libraries(${PROJECT_NAME}_node
 target_link_libraries(${PROJECT_NAME}_gen_training_data
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}_scene_segmentation)
+target_link_libraries(${PROJECT_NAME}_pick_place_tutorial
+  ${catkin_LIBRARIES})
 
 #############
 ## Install ##
@@ -219,6 +236,7 @@ install(FILES
   inference_node
   simulate
   command_generator
+  pick_place_tutorial
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

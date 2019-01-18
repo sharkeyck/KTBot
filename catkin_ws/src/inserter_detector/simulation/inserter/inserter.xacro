@@ -80,7 +80,7 @@
   </link>
 
   <joint name="joint2" type="revolute">
-    <limit effort="1000.0" lower="0.1" upper="1.1" velocity="0.5"/>
+    <limit effort="1000.0" lower="0.05" upper="1.1" velocity="0.5"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <parent link="link1"/>
     <child link="link2"/>
@@ -102,7 +102,7 @@
   </link>
 
   <joint name="joint3" type="revolute">
-    <limit effort="1000.0" lower="-${PI*0.6}" upper="${PI*0.6}" velocity="0.5"/>
+    <limit effort="1000.0" lower="-${PI}" upper="${PI}" velocity="0.5"/>
     <origin rpy="0 0 0" xyz="0 0 ${l1}"/>
     <parent link="link2"/>
     <child link="link3"/>

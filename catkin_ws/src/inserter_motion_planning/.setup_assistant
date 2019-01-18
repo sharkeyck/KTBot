@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: inserter_detector
+    relative_path: simulation/inserter/inserter.xacro
+    xacro_args: --inorder robot_name:=inserter
+  SRDF:
+    relative_path: config/inserter.srdf
+  CONFIG:
+    author_name: Scott Martin
+    author_email: smartin015@gmail.com
+    generated_timestamp: 1547411305
