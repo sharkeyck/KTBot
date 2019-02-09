@@ -18,17 +18,16 @@
   <arg name="publish_monitored_planning_scene" default="true"/>
   <arg name="capabilities" default=""/>
   <arg name="disable_capabilities" default=""/>
-  <arg name="pipeline" value="ompl"/>
 
   <!-- Trajectory Execution Functionality -->
-  <include ns="move_group" file="$(find inserter_motion_planning)/launch/trajectory_execution.launch.xml" if="$(arg allow_trajectory_execution)">
+  <include ns="move_group" file="$(find inserter_motion_planning)/launch/planning/trajectory_execution.launch.xml" if="$(arg allow_trajectory_execution)">
     <arg name="moveit_manage_controllers" value="true"/>
     <arg name="moveit_controller_manager" value="inserter" unless="$(arg fake_execution)"/>
     <arg name="moveit_controller_manager" value="fake" if="$(arg fake_execution)"/>
   </include>
 
   <!-- Sensors Functionality -->
-  <include ns="move_group" file="$(find inserter_motion_planning)/launch/sensor_manager.launch.xml" if="$(arg allow_trajectory_execution)">
+  <include ns="move_group" file="$(find inserter_motion_planning)/launch/sensor/sensor_manager.launch.xml" if="$(arg allow_trajectory_execution)">
     <arg name="moveit_sensor_manager" value="inserter" />
   </include>
 
@@ -42,10 +41,7 @@
     <param name="jiggle_fraction" value="$(arg jiggle_fraction)" />
     <param name="capabilities" value="$(arg capabilities)"/>
     <param name="disable_capabilities" value="$(arg disable_capabilities)"/>
-    <!-- <param name="planning_plugin" value="chomp_interface/CHOMPPlanner"/> -->
     <!-- <param name="constraint_samplers" value="inserter_motion_planning/InserterConstraintSamplerAllocator"/> -->
-
-    <!-- <include file="$(find inserter_motion_planning)/launch/ompl_planning_pipeline.launch.xml"/> -->
     <param name="planning_plugin" value="ompl_interface/OMPLPlanner" />
 
     <!-- Publish the planning scene of the physical robot so that rviz plugin can know actual robot -->

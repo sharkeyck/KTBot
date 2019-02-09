@@ -7,7 +7,7 @@
   <node name="inserter0_tf" pkg="tf" type="static_transform_publisher" args="0 0.5 0 0 0 0 world inserter0/world 100" />
   <param name="tf_prefix" value="inserter0"></param>
 
-  <include file="$(find inserter_motion_planning)/launch/planning_context.launch">
+  <include file="$(find inserter_motion_planning)/launch/planning/planning_context.launch">
     <arg name="load_robot_description" value="true"/>
   </include>
 
@@ -20,14 +20,14 @@
   <!-- Given the published joint states, publish tf for the robot links -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
 
-  <include file="$(find inserter_motion_planning)/launch/move_group.launch">
+  <include file="$(find inserter_motion_planning)/launch/planning/move_group.launch">
     <arg name="allow_trajectory_execution" value="true"/>
     <arg name="fake_execution" value="true"/>
     <arg name="info" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>
 
-  <include file="$(find inserter_motion_planning)/launch/moveit_rviz.launch">
+  <include file="$(find inserter_motion_planning)/launch/display/moveit_rviz.launch">
     <arg name="config" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>
