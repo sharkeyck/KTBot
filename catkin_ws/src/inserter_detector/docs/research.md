@@ -71,3 +71,7 @@ Updates 2019-01-18:
   - Apparently it's possible (as of 2014) to supply a move group containing multiple arms (see http://docs.ros.org/hydro/api/pr2_moveit_tutorials/html/planning/src/doc/move_group_interface_tutorial.html#dual-arm-pose-goals) and plan/execute on both of them within the same group.
   - Nested groups are apparently allowed like so: https://github.com/kth-ros-pkg/pr2_ft_moveit_config/blob/hydro/config/pr2.srdf
   - Will need to dynamically generate the inserter.srdf file and basically all the moveit yaml files. Looks like I'm writing another simulation.py file.
+  - Discussion: https://groups.google.com/forum/#!topic/moveit-users/vV5GR2kFR9o
+- Suggestion from craig: do continuous planning with adjustable targets
+  - "trajectory replacement" is the term typically used here.
+  - This would allow for perceived-independent action for each arm  while also preventing collisions among arms.

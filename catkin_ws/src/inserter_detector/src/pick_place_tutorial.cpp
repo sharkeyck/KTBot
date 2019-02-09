@@ -50,7 +50,7 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 #define FRAME_ID "base_link"
-#define PLANNING_GROUP "arm"
+#define PLANNING_GROUP "inserter0_arm"
 
 void gripperAction(trajectory_msgs::JointTrajectory& posture, float val) {
   posture.joint_names.resize(1);

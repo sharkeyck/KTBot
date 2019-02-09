@@ -1,4 +1,6 @@
 <launch>
+  <arg name="robot_name" default="inserter0"/>
+
   <!-- By default we do not overwrite the URDF. Change the following to true to change the default behavior -->
   <arg name="load_robot_description" default="false"/>
 
@@ -6,10 +8,10 @@
   <arg name="robot_description" default="robot_description"/>
 
   <!-- Load universal robot description format (URDF) -->
-  <param if="$(arg load_robot_description)" name="$(arg robot_description)" command="xacro --inorder robot_name:=inserter '$(find inserter_detector)/simulation/inserter/inserter2.xacro'"/>
+  <param if="$(arg load_robot_description)" name="$(arg robot_description)" command="xacro --inorder robot_name:=$(arg robot_name) '$(find inserter_detector)/simulation/inserter/inserter2.xacro'"/>
 
   <!-- The semantic description that corresponds to the URDF -->
-  <param name="$(arg robot_description)_semantic" textfile="$(find inserter_motion_planning)/config/inserter.srdf" />
+  <param name="$(arg robot_description)_semantic" command="xacro --inorder robot_name:=$(arg robot_name) '$(find inserter_motion_planning)/config/inserter.srdf.xacro'" />
 
   <!-- Load updated joint limits (override information from URDF) -->
   <group ns="$(arg robot_description)_planning">
@@ -20,5 +22,4 @@
   <group ns="$(arg robot_description)_kinematics">
     <rosparam command="load" file="$(find inserter_motion_planning)/config/kinematics.yaml"/>
   </group>
-
 </launch>
