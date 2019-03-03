@@ -166,6 +166,8 @@ add_executable(${PROJECT_NAME}_gen_training_data
   src/generate_training_data.cpp)
 add_executable(${PROJECT_NAME}_pick_place_tutorial
   src/pick_place_tutorial.cpp)
+add_executable(${PROJECT_NAME}_continuous_planning_demo
+  src/continuous_planning_demo.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -177,6 +179,8 @@ set_target_properties(${PROJECT_NAME}_gen_training_data PROPERTIES
   OUTPUT_NAME gen_training_data PREFIX "")
 set_target_properties(${PROJECT_NAME}_pick_place_tutorial PROPERTIES
   OUTPUT_NAME pick_place_tutorial PREFIX "")
+set_target_properties(${PROJECT_NAME}_continuous_planning_demo PROPERTIES
+  OUTPUT_NAME continuous_planning_demo PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -195,6 +199,8 @@ target_link_libraries(${PROJECT_NAME}_gen_training_data
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}_scene_segmentation)
 target_link_libraries(${PROJECT_NAME}_pick_place_tutorial
+  ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_continuous_planning_demo
   ${catkin_LIBRARIES})
 
 #############
@@ -237,6 +243,7 @@ install(FILES
   simulate
   command_generator
   pick_place_tutorial
+  continuous_planning_demo
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

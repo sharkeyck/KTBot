@@ -1,0 +1,7 @@
+#!/user/bin/env python
+
+import sys
+import tensorflow_data_validation as tfdv
+
+stats = tfdv.generate_statistics_from_tfrecord(data_location=sys.argv[1], stats_options=tfdv.StatsOptions(feature_whitelist=['labels']))
+tfdv.visualize_statistics(stats)

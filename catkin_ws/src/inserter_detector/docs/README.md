@@ -33,10 +33,11 @@ Milestones:
 - Clean up inserter_detector to wait for arms before starting to do segmentation
 - Simulation + MoveIt! library using point cloud positioning
   - (DONE) Read through MoveIt! library tutorials, refresh linear algebra knowledge
-  - Use MoveIt! setup wizard on the inserter model
-  - Fake/rviz simulation a la MoveIt! pick-and-place tutorial
+  - (DONE) Use MoveIt! setup wizard on the inserter model
+  - (DONE) Fake/rviz simulation a la MoveIt! pick-and-place tutorial
     http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/pick_place/pick_place_tutorial.html
-  - Gazebo simulation, cheating (reading gazebo model positions topic for objects)
+  - Async trajectory replacement Gazebo simulation, single arm (reading gazebo model positions topic for objects)
+  - Async trajectory replacement Gazebo simulation, multiple arms
   - Gazebo simulation using point cloud and SAC segmentation for identifying objects
 - Motion planner service (static)
   - Identifies pickable object

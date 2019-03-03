@@ -75,3 +75,8 @@ Updates 2019-01-18:
 - Suggestion from craig: do continuous planning with adjustable targets
   - "trajectory replacement" is the term typically used here.
   - This would allow for perceived-independent action for each arm  while also preventing collisions among arms.
+
+
+### References
+
+- https://www.cs.colorado.edu/~mozer/Teaching/Computational%20Modeling%20Prelim/Otte.pdf Applications of machine learning to path planning. Use of ML to provide a better sensor than the depth camera is considered here as a "meta-sensor". Specifically section 3.3 ("learning the representation").

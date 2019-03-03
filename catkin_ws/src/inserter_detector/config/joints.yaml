@@ -4,34 +4,35 @@ joint_state_controller:
   publish_rate: 30
 
 arm_controller:
-  type: position_controllers/JointTrajectoryController
+  type: effort_controllers/JointTrajectoryController
   joints:
     - joint1
     - joint2
+    - joint3
     - joint5
+    - joint6
   constraints:
     stopped_velocity_tolerance: 0.01
   stop_trajectory_duration: 0.5
   state_publish_rate:  30
   action_monitor_rate: 10
-
-# Note: You MUST load these PID parameters for all joints that are using the
-# PositionJointInterface, otherwise the arm + gripper will act like a giant
-# parachute, counteracting gravity, and causing some of the wheels to lose
-# contact with the ground, so the robot won't be able to properly navigate. See
-# https://github.com/ros-simulation/gazebo_ros_pkgs/issues/612
-gazebo_ros_control:
-  pid_gains:
-    # these gains are used by the gazebo_ros_control plugin
+  gains:
     joint1:
-      p: 20.0
+      p: 100.0
+      i: 0.1
+      d: 1.0
+      i_clamp: 0.2
+      antiwindup: false
+      publish_state: true
+    joint2:
+      p: 100.0
       i: 0.1
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
-    joint2:
-      p: 20.0
+    joint3:
+      p: 100.0
       i: 0.1
       d: 0.0
       i_clamp: 0.2
@@ -40,29 +41,14 @@ gazebo_ros_control:
     joint5:
       p: 100.0
       i: 0.01
-      d: 10.0
+      d: 1.0
       i_clamp: 0.2
       antiwindup: true
-      publish_state: true
-    # the following gains are used by the gazebo_mimic_joint plugin
-    joint3:
-      p: 20.0
-      i: 0.1
-      d: 0.0
-      i_clamp: 0.2
-      antiwindup: false
-      publish_state: true
-    joint4:
-      p: 20.0
-      i: 0.1
-      d: 0.0
-      i_clamp: 0.2
-      antiwindup: false
       publish_state: true
     joint6:
       p: 100.0
       i: 0.01
-      d: 10.0
+      d: 1.0
       i_clamp: 0.2
       antiwindup: true
       publish_state: true

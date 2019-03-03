@@ -12,7 +12,7 @@ def spawn_inserter(launch, name, xyz):
   base_path = 'src/inserter_detector/'
 
   # Resolve the xacro file
-  xml = subprocess.check_output(['xacro', '--inorder', base_path + 'simulation/inserter/inserter.xacro', 'robot_name:={name}'.format(name=name)])
+  xml = subprocess.check_output(['xacro', '--inorder', base_path + 'simulation/inserter/inserter2.xacro', 'robot_name:={name}'.format(name=name)])
 
   # Load the URDF into the ROS Parameter Server - this must be done for each robot
   # in order for the gazebo_ros_control plugin to have a different namespace for each robot.

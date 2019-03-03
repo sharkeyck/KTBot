@@ -1,0 +1,20 @@
+<launch>
+  <arg name="debug" default="false" />
+
+  <include file="$(find inserter_motion_planning)/launch/planning/planning_context.launch">
+    <arg name="load_robot_description" value="false"/>
+    <arg name="robot_description" value="/inserter0/robot_description"/>
+  </include>
+
+  <include file="$(find inserter_motion_planning)/launch/planning/move_group.launch">
+    <arg name="allow_trajectory_execution" value="true"/>
+    <arg name="fake_execution" value="false"/>
+    <arg name="info" value="true"/>
+    <arg name="debug" value="$(arg debug)"/>
+  </include>
+
+  <include file="$(find inserter_motion_planning)/launch/display/moveit_rviz.launch">
+    <arg name="config" value="true"/>
+    <arg name="debug" value="$(arg debug)"/>
+  </include>
+</launch>
