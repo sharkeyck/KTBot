@@ -98,6 +98,20 @@ For V2
 -installed avahi daemon for mDNS things
 -add kt user to dialout group
 
+For audio:
+
+- Add kt user to audio group `sudo gpasswd -a kt audio`
+- install audio controls `sudo apt-get install alsa-utils`
+- use `aplay` to play audio files!
+
+For I2C
+
+- Add kt user to i2c group `sudo gpasswd -a kt i2c`
+- `sudo apt-get install i2c-tools
+- `i2cdetect -y 1` to scan the i2c_1 channel
+- Current state: I2C not working, probably a software problem as the oscilloscope is not detecting anything on the pins.
+
+
 ### Debugging servos
 
 1. roscd lx16a_driver && cd src
