@@ -33,6 +33,8 @@ STDR simulator launcher
   - Install wireless charging stuff
   - Add IMU/accelerometer for better localization
   - Add depth camera for MOAR SENSINGS and battery charge localization. https://github.com/IntelRealSense/librealsense/blob/master/doc/RaspberryPi3.md
+  - Add DPDT switch for easy power on/off
+  - Buy USB extender and short USB mini cable
 - Software
   - Re-setup auto ros start on bot
   - Try out Google Cartographer (instead of slam_gmapping) https://google-cartographer-ros.readthedocs.io/en/latest/
