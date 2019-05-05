@@ -28,13 +28,10 @@ STDR simulator launcher
 - Spend time exploring the bot
 
 - Mechanical fixes
-  - add USB hub
   - do auto port recognition
+  - Switch to single microcontroller USB to odroid, do UART for everything else (less USB cables)
   - Install wireless charging stuff
-  - Add IMU/accelerometer for better localization
   - Add depth camera for MOAR SENSINGS and battery charge localization. https://github.com/IntelRealSense/librealsense/blob/master/doc/RaspberryPi3.md
-  - Add DPDT switch for easy power on/off
-  - Buy USB extender and short USB mini cable
 - Software
   - Re-setup auto ros start on bot
   - Try out Google Cartographer (instead of slam_gmapping) https://google-cartographer-ros.readthedocs.io/en/latest/
@@ -88,6 +85,7 @@ For V2
   - ros-kinetic-robot-state-publisher
   - ros-kinetic-diff-drive-controller
   - ros-kinetic-rqt-common-plugins, ros-kinetic-rqt-robot-plugins, ros-kinetic-desktop-full
+  - ros-kinetic-rosserial-python
   - davetcoleman/ros-control-boilerplate repo from Github
   - davetcoleman/gflags from Github NOPE, use: libgflags-dev
   - ros-kinetic-mqtt-bridge
@@ -113,6 +111,31 @@ For I2C
 - `i2cdetect -y 1` to scan the i2c_1 channel
 - Current state: I2C not working, probably a software problem as the oscilloscope is not detecting anything on the pins.
 
+
+For Arduino
+
+- Install platformio (`pip install -U platformio`)
+- Use `platformio run -t upload` to send a sketch to the board.
+
+For crashing/freezing:
+
+- CPU governor should be set to "conservative", see https://forum.odroid.com/viewtopic.php?f=112&t=18461 
+- Don't follow the instructions about making "conservative" like "ondemand" though. Or maybe do. Never tried it.
+- Then again, might be a network problem. 
+  - Follow [here](https://unix.stackexchange.com/questions/269661/how-to-turn-off-wireless-power-management-permanently) to set the powersave option.
+  - Also https://forum.odroid.com/viewtopic.php?f=117&t=7803 might help
+- Neither of these worked TBH... seems to be stable when sending keepalive pings (via script or putty config) though.
+
+Can't connect to bot via "ktbot.lan":
+
+- Go to http://pihole.lan/admin and login
+- --> Settings --> DHCP
+- Search on the page for "ktbot" to find the IP
+
+Using network drive:
+
+- https://codeyarns.com/2018/05/03/how-to-mount-remote-directory-on-windows-using-sshfs-win/
+- This PC -> "Map network drive" -> "\\sshfs\kt@ktbot.lan" with "use alternate credentials"
 
 ### Debugging servos
 
