@@ -1,12 +1,20 @@
 version: '2.3'
 services:
-    ros2:
+    ros1:
         extends:
             file: docker-compose.gpu.yml
             service: gpu
         container_name: ros2
         volumes:
             - /tmp/tf:/tf
+        image: osrf/ros:melodic-desktop-full
+    ros2:
+        extends:
+            file: docker-compose.gpu.yml
+            service: gpu
+        container_name: ros2
+        volumes:
+            - ./ktbot/ws:/ws
         image: osrf/ros2:nightly
     tf:
         extends:
@@ -24,3 +32,11 @@ services:
         volumes:
             - /tmp/tf:/tf
         image: gazebo:gzserver9
+    id-pose:
+        extends:
+            file: docker-compose.gpu.yml
+            service: gpu
+        container_name: pose-estimation
+        volumes:
+            - ./inserter_detector/ws:/ws
+        image: inserter-detector:pose-estimation

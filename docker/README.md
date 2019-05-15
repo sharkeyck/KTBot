@@ -43,8 +43,14 @@ https://index.ros.org/doc/ros2/Tutorials/Cross-compilation/
 
 # The Plan
 
-Container for
+Docker containers clustered by purpose
+- TF - pose estimation using memory-bound IPC comms for receiving point cloud data
+- realsense point cloud reading, https://github.com/IntelRealSense/realsense-ros/issues/386
+- ktbot server (mapping, localization, etc nodes)
+- ktbot client (odometry, motor control, sound etc nodes)
+- moveit/inserter_detector controller
 
-can use [depends_on](https://index.ros.org/doc/ros2/Tutorials/Run-2-nodes-in-two-separate-docker-containers/) to indicate deps
-
-Can use https://micro-ros.github.io/docs/tutorials/getting_started_embedded/ to install on micro for sensor data
+Ideas:
+- [depends_on](https://index.ros.org/doc/ros2/Tutorials/Run-2-nodes-in-two-separate-docker-containers/) to indicate deps
+- https://micro-ros.github.io/docs/tutorials/getting_started_embedded/ to install on micro for sensor data
+- Possible contributions to HRIM? https://acutronicrobotics.com/technology/hrim/
