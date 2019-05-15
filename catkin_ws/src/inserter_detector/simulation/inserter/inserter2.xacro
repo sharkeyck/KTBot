@@ -29,6 +29,7 @@
     <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
       <!-- <robotNamespace>$(arg robot_name)</robotNamespace> -->
       <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+      <legacyModeNS>true</legacyModeNS>
     </plugin>
   </gazebo>
 
@@ -62,7 +63,7 @@
   </link>
 
   <joint name="joint1" type="revolute">
-    <limit effort="1000.0" lower="${-PI/2}" upper="${PI/2}" velocity="5"/>
+    <limit effort="1000.0" lower="${-PI}" upper="${PI}" velocity="5"/>
     <origin rpy="0 0 0" xyz="0 0 0"/> <!-- ${base_height + 0.01} -->
     <parent link="base_link"/>
     <child link="link1"/>

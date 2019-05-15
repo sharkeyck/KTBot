@@ -5,6 +5,7 @@
   <arg name="use_sim_time" default="true"/>
   <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
+  <arg name="rviz" default="true"/>
   <arg name="debug" default="false"/>
   <arg name="detect" default="true"/>
 
@@ -47,6 +48,6 @@
   <node name="inserter_controller_spawner" pkg="controller_manager" type="spawner" args="joint_state_controller arm_controller"/>
 
   <!-- Show the point clouds in Rviz  -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find inserter_detector)/launch/realsense.rviz"/>
+  <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find inserter_detector)/launch/realsense.rviz"/>
 
 </launch>

@@ -9,6 +9,7 @@ controller_list:
     type: interpolate
     joints:
       - joint5
+      - joint6
 initial:
   - group: inserter0_arm
     pose: relaxed

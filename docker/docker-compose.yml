@@ -1,0 +1,26 @@
+version: '2.3'
+services:
+    ros2:
+        extends:
+            file: docker-compose.gpu.yml
+            service: gpu
+        container_name: ros2
+        volumes:
+            - /tmp/tf:/tf
+        image: osrf/ros2:nightly
+    tf:
+        extends:
+            file: docker-compose.gpu.yml
+            service: gpu
+        container_name: tensorflow-1.13.1
+        volumes:
+            - /tmp/tf:/tf
+        image: tensorflow/tensorflow:1.13.1-gpu
+    gz:
+        extends:
+            file: docker-compose.gpu.yml
+            service: gpu
+        container_name: gazebo9
+        volumes:
+            - /tmp/tf:/tf
+        image: gazebo:gzserver9
