@@ -8,6 +8,14 @@ services:
         volumes:
             - ./ktbot:/catkin_ws
         image: ros:ktbot
+    inserter:
+        extends:
+            file: docker-compose.gpu.yml
+            service: gpu
+        container_name: ros2
+        volumes:
+            - ./inserter:/catkin_ws
+        image: ros:ktbot
     ros2:
         extends:
             file: docker-compose.gpu.yml

@@ -1,0 +1,34 @@
+<launch>
+  <arg name="debug" default="false" />
+
+  <!-- joint_state_publisher GUI -->
+  <arg name="use_gui" default="false" />
+
+  <node name="inserter0_tf" pkg="tf" type="static_transform_publisher" args="0 0.5 0 0 0 0 world inserter0/world 100" />
+  <param name="tf_prefix" value="inserter0"></param>
+
+  <include file="$(find inserter_motion_planning)/launch/planning/planning_context.launch">
+    <arg name="load_robot_description" value="true"/>
+  </include>
+
+  <!-- We do not have a robot connected, so publish fake joint states -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="use_gui" value="$(arg use_gui)"/>
+    <rosparam param="source_list">[move_group/fake_controller_joint_states]</rosparam>
+  </node>
+
+  <!-- Given the published joint states, publish tf for the robot links -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
+
+  <include file="$(find inserter_motion_planning)/launch/planning/move_group.launch">
+    <arg name="allow_trajectory_execution" value="true"/>
+    <arg name="fake_execution" value="true"/>
+    <arg name="info" value="true"/>
+    <arg name="debug" value="$(arg debug)"/>
+  </include>
+
+  <include file="$(find inserter_motion_planning)/launch/display/moveit_rviz.launch">
+    <arg name="config" value="true"/>
+    <arg name="debug" value="$(arg debug)"/>
+  </include>
+</launch>

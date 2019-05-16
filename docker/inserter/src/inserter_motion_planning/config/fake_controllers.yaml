@@ -1,0 +1,15 @@
+controller_list:
+  - name: fake_arm_controller
+    type: interpolate
+    joints:
+      - joint1
+      - joint2
+      - joint3
+  - name: fake_hand_controller
+    type: interpolate
+    joints:
+      - joint5
+      - joint6
+initial:
+  - group: inserter0_arm
+    pose: relaxed

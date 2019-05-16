@@ -1,0 +1,5 @@
+<launch>
+  <node name="prediction" pkg="inserter_detector" type="inference_node" args="--model_json_path /home/semartin/Documents/KTBot/catkin_ws/src/inserter_detector/src/models/2018_12_30_00/model.json --weights_path /home/semartin/Documents/KTBot/catkin_ws/src/inserter_detector/src/models/2018_12_30_00/weights.h5" output="screen">
+    <remap from="input" to="/inserter/cloud_segments"/>
+  </node>
+</launch>

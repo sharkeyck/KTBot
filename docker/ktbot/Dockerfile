@@ -10,7 +10,6 @@ RUN apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C3
 RUN apt-get update && apt-get install -y \
     ros-kinetic-desktop-full \
     ros-kinetic-ros-base \
-    ros-kinetic-ros-control-boilerplate \
     ros-kinetic-joint-state-controller \
     ros-kinetic-robot-state-publisher \
     ros-kinetic-diff-drive-controller \
@@ -22,6 +21,12 @@ RUN apt-get update && apt-get install -y \
     ros-kinetic-ros-controllers \
     ros-kinetic-xacro \
     libgflags-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y \
+    ros-kinetic-moveit-core \
+    ros-kinetic-moveit-visual-tools \
+    ros-kinetic-moveit-ros-planning-interface \
     && rm -rf /var/lib/apt/lists/*
 
 # Test locale
@@ -40,5 +45,7 @@ RUN apt-get update && apt-get install -y \
 
 # Auto-install workspace source files
 # RUN echo "source /ws/install/setup.bash" >> ~/.bashrc
+
+RUN echo "source /opt/ros/kinetic/setup.bash && cd /catkin_ws" >> ~/.bashrc
 
 # ENTRYPOINT [ "sh", "-c", "echo $HOME" ]

@@ -5,6 +5,9 @@ devel/
 *.iso
 *.backup
 *.pyc
+*.bag
+*.bag.\d+
+*.tfrecord
 src/arb_screw_detector/lib/*
 src/arb_screw_detector/share/*
 ws/build
