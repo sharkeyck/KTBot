@@ -1,13 +1,13 @@
 version: '2.3'
 services:
-    ros1:
+    ktbot:
         extends:
             file: docker-compose.gpu.yml
             service: gpu
         container_name: ros2
         volumes:
-            - /tmp/tf:/tf
-        image: osrf/ros:melodic-desktop-full
+            - ./ktbot:/catkin_ws
+        image: ros:ktbot
     ros2:
         extends:
             file: docker-compose.gpu.yml

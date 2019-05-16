@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package>
+  <name>ktbot_control</name>
+  <version>0.0.1</version>
+  <description>Simple simulation interface and template for setting up a hardware interface for ktbot</description>
+
+  <maintainer email="smartin015@gmail.com">Someone</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">https://github.com/davetcoleman/ros_control_boilerplate</url>
+  <url type="butracker">https://github.com/davetcoleman/ros_control_boilerplate/issues</url>
+  <url type="repository">https://github.com/davetcoleman/ros_control_boilerplate/</url>
+
+  <author email="davetcoleman@gmail.com">Dave Coleman</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>ros_control_boilerplate</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>lx16a_driver</build_depend>
+
+  <run_depend>ros_control_boilerplate</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>lx16a_driver</run_depend>
+
+  <export>
+  </export>
+</package>

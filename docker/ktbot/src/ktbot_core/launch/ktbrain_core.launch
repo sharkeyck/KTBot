@@ -1,0 +1,55 @@
+<launch>
+  <arg name="navigation" value="false" />
+
+  <group ns="ktbot">
+    <!-- Load example URDF -->
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find ktbot_description)/urdf/ktbot.xacro'" />
+
+    <!-- Convert joint states to /tf tranforms -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+    <node name="mqtt_bridge" pkg="mqtt_bridge" type="mqtt_bridge_node.py" output="screen">
+      <rosparam command="load" file="$(find ktbot_core)/config/ktbrain_bridge_params.yaml" />
+    </node>
+
+    <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" output="screen">
+      <remap from="scan" to="/ktbot/laser_scan"/>
+      <param name="temporalUpdate" value="2.0"/>
+    </node>
+
+    <!-- we remap the ktsim topics when we need them, so as not to involve MQTT -->
+    <node name="remap_sim_cmd_vel" pkg="topic_tools" type="relay" args="cmd_vel /ktbot/wheel_diff_drive_controller/cmd_vel">
+     <param name="stealth" value="true"/>
+    </node>
+
+    <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
+      <!--<param name="default_topic" value=""/>-->
+      <param name="default_topic" value="cmd_vel"/>
+    </node>
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ktbot_description)/config/ktbot_navigation.rviz"></node>
+
+    <group if="$(arg navigation)">
+      <!-- Run the map server -->
+      <!--
+      <node name="map_server" pkg="map_server" type="map_server" args="$(find my_map_package)/my_map.pgm my_map_resolution"/>
+      -->
+
+      <!--- Run AMCL -->
+      <!--
+      <include file="$(find amcl)/examples/amcl_omni.launch" />
+      -->
+
+      <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <rosparam file="$(find ktbot_core)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find ktbot_core)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find ktbot_core)/config/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find ktbot_core)/config/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find ktbot_core)/config/base_local_planner_params.yaml" command="load" />
+        <remap from="/odom" to="wheel_diff_drive_controller/odom"/>
+        <remap from="/cmd_vel" to="wheel_diff_drive_controller/cmd_vel"/>
+        <remap from="/map" to="map"/>
+      </node>
+    </group>
+  </group>
+</launch>

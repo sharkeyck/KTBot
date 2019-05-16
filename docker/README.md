@@ -54,3 +54,11 @@ Ideas:
 - [depends_on](https://index.ros.org/doc/ros2/Tutorials/Run-2-nodes-in-two-separate-docker-containers/) to indicate deps
 - https://micro-ros.github.io/docs/tutorials/getting_started_embedded/ to install on micro for sensor data
 - Possible contributions to HRIM? https://acutronicrobotics.com/technology/hrim/
+
+## What's missing
+
+- ros2 navigation2 for ktbot
+  - no holonomic control schema, would have to make this manually
+    or deal with weird motion commands.
+  - obstacle detection not quite robust
+- moveit 2.0 not built yet, Official 2.0 Release slated for 1 June 2019

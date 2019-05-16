@@ -1,0 +1,11 @@
+obstacle_range: 1.0
+raytrace_range: 5.0
+inf_is_valid: true
+footprint: [[0.17, 0.17], [0.17, -0.17], [-0.17, -0.17], [-0.17, 0.17]]
+#robot_radius: ir_of_robot
+inflation_radius: 2.0
+cost_scaling_factor: 2.58
+
+observation_sources: laser_scan_sensor
+
+laser_scan_sensor: {sensor_frame: base_link, data_type: LaserScan, topic: /ktbot/laser_scan, marking: true, clearing: true}

@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<robot>
+
+  <!-- ros_control plugin -->
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>ktbot</robotNamespace>
+      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="caster_collision">
+    <mu1 value="0.0"/>
+    <mu2 value="0.0"/>
+    <minDepth value="0.1"/>
+    <maxVel value="100.0"/>
+    <material value="Gazebo/Gray"/>
+  </gazebo>
+
+  <gazebo reference="wheel_left">
+    <mu1 value="1000.0"/>
+    <mu2 value="1000.0"/>
+    <kp value="10000000.0" />
+    <kd value="1.0"/>
+    <minDepth value="0.1"/>
+    <maxVel value="0.0"/>
+    <material value="Gazebo/DarkGray"/>
+  </gazebo>
+
+  <gazebo reference="wheel_right">
+    <mu1 value="1000.0"/>
+    <mu2 value="1000.0"/>
+    <kp value="10000000.0" />
+    <kd value="1.0"/>
+    <minDepth value="0.1"/>
+    <maxVel value="0.0"/>
+    <material value="Gazebo/DarkGray"/>
+  </gazebo>
+
+  <gazebo reference="lidar">
+    <sensor type="gpu_ray" name="head_sensor">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>5</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>0</min_angle>
+            <max_angle>6.26573201466</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.10</min>
+          <max>5.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_head_control" filename="libgazebo_ros_gpu_laser.so">
+        <topicName>laser_scan</topicName>
+        <frameName>/base_laser_link</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+</robot>
